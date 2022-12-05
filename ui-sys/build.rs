@@ -57,6 +57,9 @@ fn main() {
         let src_base = env::var("SRC_BASE").unwrap_or("libui".to_string());
         let src_path = |x| format!("{}/{}", src_base, x);
 
+        // libui might emit lots of warning we can do nothing about here
+        base_config.warnings(false);
+
         // Add source files that are common to all platforms
         base_config.include(src_path("/common"));
 

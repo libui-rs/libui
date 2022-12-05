@@ -4,7 +4,6 @@
 extern crate iui;
 use iui::controls::{Button, MultilineEntry, VerticalBox};
 use iui::prelude::*;
-use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
 
@@ -39,7 +38,7 @@ fn main() {
                             &format!(
                                 "Could not open file {}: {}",
                                 path.display(),
-                                why.description()
+                                why.to_string()
                             ),
                         );
                         return;
@@ -54,7 +53,7 @@ fn main() {
                             &format!(
                                 "Could not write to file {}: {}",
                                 path.display(),
-                                why.description()
+                                why.to_string()
                             ),
                         );
                         return;
