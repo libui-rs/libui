@@ -1,65 +1,73 @@
-# Improved User Interface
-## A cross-platform UI toolkit for Rust based on libui
-[![travis-ci build status](https://travis-ci.com/rust-native-ui/libui-rs.svg?branch=trunk)](https://travis-ci.com/rust-native-ui/libui-rs)
-[![libui-rs appveyor build status badge](https://ci.appveyor.com/api/projects/status/github/noracodes/libui-rs)](https://ci.appveyor.com/project/rust-native-ui/libui-rs)
-![actively developed badge](https://img.shields.io/badge/maintenance-actively--developed-brightgreen.svg)
+# Improved User Interface [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT) [![License: Apache](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-iui: [![iui crates.io version badge](https://img.shields.io/crates/v/iui.svg)](https://crates.io/crates/iui/)
-[![docs.rs for iui](https://docs.rs/iui/badge.svg)](https://docs.rs/iui)
-![rustc 1.40](https://img.shields.io/badge/rustc-1.40-blue)
-ui-sys: [![ui-sys crates.io version badge](https://img.shields.io/crates/v/ui-sys.svg)](https://crates.io/crates/ui-sys/)
-[![docs.rs for ui-sys](https://docs.rs/ui-sys/badge.svg)](https://docs.rs/ui)
-![rustc 1.40](https://img.shields.io/badge/rustc-1.40-blue)
 
-`iui` is a **simple** (about 4 kLOC of Rust), **small** (about 800kb, including `libui`), **easy to distribute** (one shared library) GUI library, providing a **Rusty** user interface library that binds to **native APIs** via the [libui](https://github.com/andlabs/libui) and the `ui-sys` bindings crate.
+## A native cross-platform UI toolkit for Rust
 
-`iui` wraps native retained mode GUI libraries, like Win32API on Windows, Cocoa on Mac OS X, and GTK+ on Linux and elsewhere. Thus all `iui` apps have a native look and feel and start from a highly performant base which is well integrated with the native ecosystem on each platform. Because it implements only the least common subset of these platform APIs, your apps will work on all platforms and won't have significant behavioral inconsistencies, with no additional effort on your part.
+`iui` is a **simple**, **small** and **easy to distribute** GUI library. It provides a native UI for your platform by utilising your systems API instead of implementing yet another mismatched looking renderer. Thus all `iui` apps are lightweight, have a native look and feel and start from a highly performant base which is well integrated with the ecosystem on each platform. Because it implements only the least common subset of these platform APIs, your apps will work on all platforms and won't have significant behavioral inconsistencies, with no additional effort on your part.
+
+Technically, `iui` is a "rustification" wrapper over [`libui-ng`](https://github.com/libui-ng/libui-ng) which actually abstracts the native GUI framework. That is the Win32 API on Windows, Cocoa on Mac OS X, and GTK3 for Linux and others. 
 
 ## Using
 
-Add `iui` to your project with:
+Add `iui` to your dependency list in `cargo.toml` with:
 
 ```toml
 iui = { git = "https://github.com/nptr/libui-rs", branch = "trunk" }
 ```
 
-Then, in your code, all you have to do is:
+Next we suggest to have a look at the [example applications](https://github.com/nptr/libui-rs/tree/trunk/iui/examples) or start with the minimal example printed here:
 
-1. create a [`UI`](https://docs.rs/iui/*/iui/struct.UI.html#method.init) handle, initializing the UI library and guarding against memory unsafety
-1. make a [window](https://docs.rs/iui/*/iui/controls/struct.Window.html), or a few, with title and platform-native decorations, into which your app will be drawn
-1. add all your [controls](https://docs.rs/iui/*/iui/controls/index.html), like buttons and text inputs, laid out with both axial and grid layout options
-1. implement some [callbacks](https://docs.rs/iui/*/iui/controls/struct.Button.html#method.on_clicked) for user input, taking full advantage of Rust's concurrency protections
-1. call [`UI::main`](https://docs.rs/iui/*/iui/struct.UI.html#method.main), or take control over the event processing with an [`EventLoop`](https://docs.rs/iui/*/iui/struct.EventLoop.html), and voíla! A GUI!
 
+```rust
+#![cfg_attr(not(test), windows_subsystem = "windows")]
+#![cfg_attr(test, windows_subsystem = "console")]
+
+extern crate iui;
+use iui::controls::*;
+use iui::prelude::*;
+
+fn main() {
+    let ui = UI::init()
+        .expect("Couldn't initialize UI library");
+    
+    let mut win = Window::new(&ui, "Example", 300, 200, 
+        WindowType::NoMenubar);
+    let layout = VerticalBox::new(&ui);
+
+    // add controls to your layout here
+
+    win.set_child(&ui, layout);
+    win.show(&ui);
+    ui.main();
+}
+```
 
 We have documentation on [docs.rs](https://docs.rs/iui) for released versions and on [github](https://rust-native-ui.github.io/libui-rs/iui/index.html) for `trunk`.
 
-## Examples
+## Screenshots
 
-![Three example GUI applications running on Linux](images/themed.png)
-![Three example GUI applications running on Ubuntu](images/ubuntu.png)
+On the left see a `libui` application running on a GNOME desktop with GTK 3. On the right under Windows 10 with its native user interface.
 
-Check out the [`examples/`](https://github.com/rust-native-ui/libui-rs/tree/0.3.0/iui/examples) directory from the latest release for these examples and more.
+![Example application running under Linux and Windows](images/libui_gtk_win.png)
 
-## Organization
+For more screenshots, look at the examples of [`libui-ng`](https://github.com/libui-ng/libui-ng).
 
-This repository contains multiple Rust crates: 
+## Prerequisits & Building
 
-* `iui` is the safe Rust wrapper, to be used by most users.
-* `ui-sys` is the raw unsafe bindings to the `libui` C code. `libui` is included as a submodule.
+To build the underlying `libui-ng` your system must have certain tools installed in addition to your rust toolchain. 
+The build of `libui-ng` happens automatically, but the tools must be there. I am trying to cut down on this inconvenience.
 
-Also be sure to look at our [changelog](CHANGELOG.md) and learn [how to contribute](CONTRIBUTING/CONTRIBUTING.md).
+__Linux:__
+* libgtk-3-dev (debian package) - for compiling `libui-ng`
+* libclang (debian package) - for generating the `libui-ng` bindings
 
+__Windows:__
+* MSVC (via Windows SDK or Visual Studio)
+* LLVM - for generating the `libui-ng` bindings
 
-### Building ui-sys
-
-`ui-sys` includes `libui` as a sub-module and allows it to be built on-the-fly with the
-default features `fetch` and `build`. With `fetch` disabled, it will simply build the
-existing sources without updating them, and with `build` disabled it will build nothing,
-assuming either a system or local (in `./lib/`) version of `libui` is available.
-
-Note that _most of the time_, building `libui` on the fly is what you want.
+Note: MinGW-64 does compile and link, but the application won't start due to MinGW missing `TaskDialog()`.
 
 ## Acknowledgments
 
-Based on work by [@pcwalton](https://github.com/pcwalton/).
+* Based on work by [@pcwalton](https://github.com/pcwalton/).
+* Later forked from [https://github.com/rust-native-ui/libui-rs](rust-native-ui/libui-rs).
