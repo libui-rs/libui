@@ -31,6 +31,12 @@ define_control! {
 }
 
 define_control! {
+    /// A text buffer suitable for searching.
+    rust_type: SearchEntry,
+    sys_type: uiEntry
+}
+
+define_control! {
     /// Multi-line editable text buffer.
     rust_type: MultilineEntry,
     sys_type: uiMultilineEntry
@@ -45,6 +51,12 @@ impl Entry {
 impl PasswordEntry {
     pub fn new(_ctx: &UI) -> PasswordEntry {
         unsafe { PasswordEntry::from_raw(ui_sys::uiNewPasswordEntry()) }
+    }
+}
+
+impl SearchEntry {
+    pub fn new(_ctx: &UI) -> SearchEntry {
+        unsafe { SearchEntry::from_raw(ui_sys::uiNewSearchEntry()) }
     }
 }
 
@@ -92,6 +104,7 @@ impl TextEntry for PasswordEntry {
                 .into_owned()
         }
     }
+
     fn set_value(&mut self, _ctx: &UI, value: &str) {
         let cstring = CString::new(value.as_bytes().to_vec()).unwrap();
         unsafe { ui_sys::uiEntrySetText(self.uiEntry, cstring.as_ptr()) }
@@ -114,6 +127,37 @@ impl TextEntry for PasswordEntry {
                 mem::transmute::<*mut c_void, &mut Box<dyn FnMut(String)>>(data)(string);
                 mem::forget(entry);
             }
+        }
+    }
+}
+
+impl TextEntry for SearchEntry {
+    fn value(&self, _ctx: &UI) -> String {
+        unsafe { from_toolkit_string(ui_sys::uiEntryText(self.uiEntry)) }
+    }
+
+    fn set_value(&mut self, _ctx: &UI, value: &str) {
+        let cstring = to_toolkit_string(value);
+        unsafe { ui_sys::uiEntrySetText(self.uiEntry, cstring.as_ptr()) }
+    }
+
+    /// Some systems will deliberately delay the callback for a more natural feel.
+    fn on_changed<'ctx, F>(&mut self, _ctx: &'ctx UI, callback: F)
+    where
+        F: FnMut(String) + 'static,
+    {
+        extern "C" fn c_callback<G>(entry: *mut uiEntry, data: *mut c_void)
+        where
+            G: FnMut(String),
+        {
+            let string = unsafe { CStr::from_ptr(ui_sys::uiEntryText(entry)) }
+                .to_string_lossy()
+                .into_owned();
+            unsafe { from_void_ptr::<G>(data)(string) }
+        }
+
+        unsafe {
+            ui_sys::uiEntryOnChanged(self.uiEntry, Some(c_callback::<F>), to_heap_ptr(callback));
         }
     }
 }
