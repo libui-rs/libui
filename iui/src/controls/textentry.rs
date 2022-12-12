@@ -8,6 +8,7 @@ use callback_helpers::{from_void_ptr, to_heap_ptr};
 use std::ffi::{CStr, CString};
 use std::mem;
 use std::os::raw::c_void;
+use std::os::raw::c_int;
 use str_tools::{from_toolkit_string, to_toolkit_string};
 use ui::UI;
 use ui_sys::{self, uiControl, uiEntry, uiMultilineEntry};
@@ -63,6 +64,19 @@ impl SearchEntry {
 impl MultilineEntry {
     pub fn new(_ctx: &UI) -> MultilineEntry {
         unsafe { MultilineEntry::from_raw(ui_sys::uiNewMultilineEntry()) }
+    }
+
+    pub fn append(&mut self, _ctx: &UI, value: &str) {
+        let cstring = to_toolkit_string(value);
+        unsafe { ui_sys::uiMultilineEntryAppend(self.uiMultilineEntry, cstring.as_ptr()) }
+    }
+
+    pub fn readonly(&self, _ctx: &UI) -> bool {
+        unsafe { ui_sys::uiMultilineEntryReadOnly(self.uiMultilineEntry) != 0 }
+    }
+
+    pub fn set_readonly(&mut self, _ctx: &UI, readonly: bool) {
+        unsafe { ui_sys::uiMultilineEntrySetReadOnly(self.uiMultilineEntry, readonly as c_int) }
     }
 }
 
