@@ -19,7 +19,7 @@ impl Combobox {
         unsafe { Combobox::from_raw(ui_sys::uiNewCombobox()) }
     }
 
-    /// Adds a new option to the combination box.
+    /// Adds a new option to the combo box.
     pub fn append(&self, _ctx: &UI, name: &str) {
         unsafe {
             let c_string = to_toolkit_string(name);
@@ -27,11 +27,38 @@ impl Combobox {
         }
     }
 
+    /// Inserts an item at index to the combo box.
+    pub fn insert_at(&self, _ctx: &UI, index: i32, name: &str) {
+        unsafe {
+            let c_string = to_toolkit_string(name);
+            ui_sys::uiComboboxInsertAt(self.uiCombobox, index, c_string.as_ptr())
+        }
+    }
+
+    /// Deletes the item at index from the combo box.
+    ///
+    /// Deleting the index of the item currently selected will move the
+    /// selection to the next item in the combo box or `-1` if no such item exists.
+    pub fn delete(&self, _ctx: &UI, index: i32) {
+        unsafe { ui_sys::uiComboboxDelete(self.uiCombobox, index) }
+    }
+
+    /// Deletes all items from the combo box.
+    pub fn clear(&self, _ctx: &UI) {
+        unsafe { ui_sys::uiComboboxClear(self.uiCombobox) }
+    }
+
+    /// Returns the number of items contained within the combo box.
+    pub fn count(&self, _ctx: &UI) -> i32 {
+        unsafe { ui_sys::uiComboboxNumItems(self.uiCombobox) }
+    }
+
     /// Returns the index of the currently selected option.
     pub fn selected(&self, _ctx: &UI) -> i32 {
         unsafe { ui_sys::uiComboboxSelected(self.uiCombobox) }
     }
 
+    /// Selects an item by its index
     pub fn set_selected(&mut self, _ctx: &UI, value: i32) {
         unsafe { ui_sys::uiComboboxSetSelected(self.uiCombobox, value) }
     }
