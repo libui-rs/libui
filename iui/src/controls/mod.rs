@@ -9,28 +9,32 @@ use std::ptr;
 
 #[macro_use]
 mod create_macro;
-mod label;
-pub use self::label::*;
-mod button;
-pub use self::button::*;
-mod window;
-pub use self::window::*;
-mod layout;
-pub use self::layout::*;
-mod textentry;
-pub use self::textentry::*;
-mod numericentry;
-pub use self::numericentry::*;
-mod checkbox;
-pub use self::checkbox::*;
-mod combobox;
-pub use self::combobox::*;
-mod radiobuttons;
-pub use self::radiobuttons::*;
-mod progressbar;
-pub use self::progressbar::*;
 mod area;
 pub use self::area::*;
+mod button;
+pub use self::button::*;
+mod checkbox;
+pub use self::checkbox::*;
+mod colorbutton;
+pub use self::colorbutton::*;
+mod combobox;
+pub use self::combobox::*;
+mod datetimepicker;
+pub use self::datetimepicker::*;
+mod label;
+pub use self::label::*;
+mod layout;
+pub use self::layout::*;
+mod numericentry;
+pub use self::numericentry::*;
+mod progressbar;
+pub use self::progressbar::*;
+mod radiobuttons;
+pub use self::radiobuttons::*;
+mod textentry;
+pub use self::textentry::*;
+mod window;
+pub use self::window::*;
 
 /// A generic UI control. Any UI control can be turned into this type.
 ///
