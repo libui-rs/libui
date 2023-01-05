@@ -21,6 +21,8 @@ mod combobox;
 pub use self::combobox::*;
 mod datetimepicker;
 pub use self::datetimepicker::*;
+mod fontbutton;
+pub use self::fontbutton::*;
 mod label;
 pub use self::label::*;
 mod layout;
