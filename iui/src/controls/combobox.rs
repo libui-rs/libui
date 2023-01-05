@@ -1,11 +1,12 @@
 use super::Control;
 use callback_helpers::{from_void_ptr, to_heap_ptr};
+use std::ffi::CStr;
 use std::i32;
 use std::mem;
 use std::os::raw::c_void;
 use str_tools::to_toolkit_string;
 use ui::UI;
-use ui_sys::{self, uiCombobox, uiControl};
+use ui_sys::{self, uiCombobox, uiControl, uiEditableCombobox};
 
 define_control! {
     /// Allows the user to select any one of its options, from a list shown only when selected.
@@ -78,6 +79,75 @@ impl Combobox {
         unsafe {
             ui_sys::uiComboboxOnSelected(
                 self.uiCombobox,
+                Some(c_callback::<F>),
+                to_heap_ptr(callback),
+            );
+        }
+    }
+}
+
+define_control! {
+    /// A control to select one item from a predefined list of items or enter ones own.
+    rust_type: EditableCombobox,
+    sys_type: uiEditableCombobox
+}
+
+impl EditableCombobox {
+    /// Creates a new editable combobox.
+    pub fn new(_ctx: &UI) -> EditableCombobox {
+        unsafe { EditableCombobox::from_raw(ui_sys::uiNewEditableCombobox()) }
+    }
+
+    /// Adds a new option to the combobox.
+    pub fn append(&self, _ctx: &UI, name: &str) {
+        unsafe {
+            let c_string = to_toolkit_string(name);
+            ui_sys::uiEditableComboboxAppend(self.uiEditableCombobox, c_string.as_ptr())
+        }
+    }
+
+    // Returns the text of the editable combobox.
+    //
+    // This text is either the text of one of the predefined
+    // list items or the text manually entered by the user.
+    pub fn value(&self, _ctx: &UI) -> String {
+        let ptr = unsafe { ui_sys::uiEditableComboboxText(self.uiEditableCombobox) };
+        let text: String = unsafe { CStr::from_ptr(ptr).to_string_lossy().into() };
+        unsafe {
+            ui_sys::uiFreeText(ptr);
+        }
+        text
+    }
+
+    // Sets the editable combobox text.
+    pub fn set_value(&mut self, _ctx: &UI, value: &str) {
+        let cstring = to_toolkit_string(value);
+        unsafe { ui_sys::uiEditableComboboxSetText(self.uiEditableCombobox, cstring.as_ptr()) }
+    }
+
+    /// Registers a callback for when an editable combobox item is selected or user text changed.
+    ///
+    /// Note: The callback is not triggered when calling set_value().
+    /// Note: Only one callback can be registered at a time.
+    pub fn on_changed<'ctx, F>(&mut self, _ctx: &'ctx UI, callback: F)
+    where
+        F: FnMut(String) + 'static,
+    {
+        extern "C" fn c_callback<G>(combobox: *mut uiEditableCombobox, data: *mut c_void)
+        where
+            G: FnMut(String),
+        {
+            let ptr = unsafe { ui_sys::uiEditableComboboxText(combobox) };
+            let text: String = unsafe { CStr::from_ptr(ptr).to_string_lossy().into() };
+            unsafe {
+                ui_sys::uiFreeText(ptr);
+            }
+            unsafe { from_void_ptr::<G>(data)(text) }
+        }
+
+        unsafe {
+            ui_sys::uiEditableComboboxOnChanged(
+                self.uiEditableCombobox,
                 Some(c_callback::<F>),
                 to_heap_ptr(callback),
             );
