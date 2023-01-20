@@ -6,6 +6,7 @@ use ui::UI;
 use ui_sys::{self, uiControl, uiDateTimePicker};
 
 define_control! {
+    /// Allows to enter a date and/or time.
     rust_type: DateTimePicker,
     sys_type: uiDateTimePicker
 }
@@ -28,9 +29,12 @@ impl DateTimePicker {
         }
     }
 
-    /// Returns date and time stored in the DateTimePicker.
+    /// Returns the date and/or time stored in the DateTimePicker.
     ///
-    /// Warning: The `struct tm` members `tm_wday` and `tm_yday` are undefined
+    /// Depending on the `DateTimePickerKind` you created, the date or time fields
+    /// will not be set and instead contain their unix epoch default.
+    ///
+    /// Warning: The `struct tm` member `tm_isdst` is unused on Windows and will be `-1`.
     pub fn datetime(&self, _ctx: &UI) -> libc::tm {
         unsafe {
             let mut datetime = libc::tm {
