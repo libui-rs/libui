@@ -6,7 +6,7 @@ use ui::UI;
 use ui_sys::{self, uiColorButton, uiControl};
 
 define_control! {
-    /// A button which allows the user to pick a color.
+    /// A button-like control which allows the user to pick a color.
     rust_type: ColorButton,
     sys_type: uiColorButton
 }
@@ -17,7 +17,7 @@ impl ColorButton {
         unsafe { ColorButton::from_raw(ui_sys::uiNewColorButton()) }
     }
 
-    /// Get the buttons color in a range from [0, 1.0] per component.
+    /// Get the selected color as RGBA with values in range of [0, 1.0] per component.
     pub fn color(&self, _ctx: &UI) -> (f64, f64, f64, f64) {
         unsafe {
             let (mut r, mut g, mut b, mut a) = (0.0, 0.0, 0.0, 0.0);
@@ -26,7 +26,7 @@ impl ColorButton {
         }
     }
 
-    /// Set the buttons color in the range of [0, 1.0] per component.
+    /// Set the buttons selected color. Component are in the range of [0, 1.0].
     pub fn set_color(&mut self, _ctx: &UI, r: f64, g: f64, b: f64, a: f64) {
         unsafe {
             ui_sys::uiColorButtonSetColor(self.uiColorButton, r, g, b, a);
@@ -35,7 +35,7 @@ impl ColorButton {
 
     /// Run the given callback when the selected color changed.
     ///
-    /// The callback is not triggered when calling set_color().
+    /// The callback is not triggered when calling `set_color()`.
     /// Only one callback can be registered at a time.
     pub fn on_changed<'ctx, F>(&mut self, _ctx: &'ctx UI, callback: F)
     where

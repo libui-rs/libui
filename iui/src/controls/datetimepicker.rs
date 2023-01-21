@@ -68,7 +68,7 @@ impl DateTimePicker {
 
     /// Registers a callback for when the date time picker value is changed by the user.
     ///
-    /// The callback is not triggered when calling set_datetime().
+    /// The callback is not triggered when calling `set_datetime()`.
     /// Only one callback can be registered at a time.
     pub fn on_changed<'ctx, F>(&mut self, _ctx: &'ctx UI, callback: F)
     where
