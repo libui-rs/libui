@@ -33,6 +33,8 @@ mod progressbar;
 pub use self::progressbar::*;
 mod radiobuttons;
 pub use self::radiobuttons::*;
+mod table;
+pub use self::table::*;
 mod textentry;
 pub use self::textentry::*;
 mod window;
