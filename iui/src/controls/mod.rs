@@ -23,6 +23,8 @@ mod datetimepicker;
 pub use self::datetimepicker::*;
 mod fontbutton;
 pub use self::fontbutton::*;
+mod form;
+pub use self::form::*;
 mod label;
 pub use self::label::*;
 mod layout;
