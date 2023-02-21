@@ -53,11 +53,11 @@ fn main() {
     let ui = UI::init().expect("Couldn't initialize UI library");
     let mut win = Window::new(&ui, "Area Canvas Example", 200, 200, WindowType::NoMenubar);
 
-    let mut hbox = HorizontalBox::new(&ui);
-    let area = Area::new(&ui, Box::new(HandleCanvas {}));
-    hbox.append(&ui, area, LayoutStrategy::Stretchy);
+    let mut hbox = HorizontalBox::new();
+    let area = Area::new(Box::new(HandleCanvas {}));
+    hbox.append(area, LayoutStrategy::Stretchy);
 
-    win.set_child(&ui, hbox);
-    win.show(&ui);
+    win.set_child(hbox);
+    win.show();
     ui.main();
 }

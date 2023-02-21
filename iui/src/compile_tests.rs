@@ -36,15 +36,15 @@
 //! # use iui::controls::{Button};
 //! let ui = UI::init().unwrap();
 //! let mut win = Window::new(&ui, "Test App", 200, 200, WindowType::NoMenubar);
-//! let mut button = Button::new(&ui, "Button");
+//! let mut button = Button::new("Button");
 //!
 //! {
 //!     let s = String::from("Whatever!");
 //!     let callback =  |b: &mut Button| { println!("{}", s)};
-//!     button.on_clicked(&ui, callback);
+//!     button.on_clicked(callback);
 //! }
 //!
-//! win.set_child(&ui, button);
+//! win.set_child(button);
 //! ```
 //!
 //! Here we try to use-after-free data in the on-tick callback.
@@ -59,10 +59,10 @@
 //! {
 //!     let s = String::from("Whatever!");
 //!     let callback =  || { println!("{}", s) };
-//!     ev.on_tick(&ui, callback);
+//!     ev.on_tick(callback);
 //! }
 //!
-//! ev.next_tick(&ui);
+//! ev.next_tick();
 //! ui.quit();
-//! ev.next_tick(&ui);
+//! ev.next_tick();
 //! ```

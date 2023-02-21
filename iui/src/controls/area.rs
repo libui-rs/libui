@@ -4,7 +4,6 @@ use controls::Control;
 use draw;
 use std::mem;
 use std::os::raw::c_int;
-use ui::UI;
 pub use ui_sys::uiExtKey as ExtKey;
 use ui_sys::{
     self, uiArea, uiAreaDrawParams, uiAreaHandler, uiAreaKeyEvent, uiAreaMouseEvent, uiControl,
@@ -27,7 +26,7 @@ struct RustAreaHandler {
 }
 
 impl RustAreaHandler {
-    fn new(_ctx: &UI, trait_object: Box<dyn AreaHandler>) -> Box<RustAreaHandler> {
+    fn new(trait_object: Box<dyn AreaHandler>) -> Box<RustAreaHandler> {
         return Box::new(RustAreaHandler {
             ui_area_handler: uiAreaHandler {
                 Draw: Some(draw),
@@ -148,9 +147,9 @@ define_control! {
 
 impl Area {
     /// Creates a new non-scrolling area.
-    pub fn new(ctx: &UI, area_handler: Box<dyn AreaHandler>) -> Area {
+    pub fn new(area_handler: Box<dyn AreaHandler>) -> Area {
         unsafe {
-            let mut rust_area_handler = RustAreaHandler::new(ctx, area_handler);
+            let mut rust_area_handler = RustAreaHandler::new(area_handler);
             let area = Area::from_raw(ui_sys::uiNewArea(
                 &mut *rust_area_handler as *mut RustAreaHandler as *mut uiAreaHandler,
             ));
@@ -160,14 +159,9 @@ impl Area {
     }
 
     /// Creates a new scrolling area.
-    pub fn new_scrolling(
-        ctx: &UI,
-        area_handler: Box<dyn AreaHandler>,
-        width: i64,
-        height: i64,
-    ) -> Area {
+    pub fn new_scrolling(area_handler: Box<dyn AreaHandler>, width: i64, height: i64) -> Area {
         unsafe {
-            let mut rust_area_handler = RustAreaHandler::new(ctx, area_handler);
+            let mut rust_area_handler = RustAreaHandler::new(area_handler);
             let area = Area::from_raw(ui_sys::uiNewScrollingArea(
                 &mut *rust_area_handler as *mut RustAreaHandler as *mut uiAreaHandler,
                 width as i32,
@@ -186,14 +180,14 @@ impl Area {
     ///
     /// # Unsafety
     /// If called on a non-scrolling `Area`, this function's behavior is undefined.
-    pub unsafe fn set_size(&self, _ctx: &UI, width: u64, height: u64) {
+    pub unsafe fn set_size(&self, width: u64, height: u64) {
         // TODO: Check if the area is scrolling?
         ui_sys::uiAreaSetSize(self.uiArea, width as i32, height as i32);
     }
 
     /// Queues the entire `Area` to be redrawn. This function returns immediately;
     /// the `Area` is redrawn when the UI thread is next non-busy.
-    pub fn queue_redraw_all(&self, _ctx: &UI) {
+    pub fn queue_redraw_all(&self) {
         unsafe { ui_sys::uiAreaQueueRedrawAll(self.uiArea) }
     }
 
@@ -203,7 +197,7 @@ impl Area {
     ///
     /// # Unsafety
     /// If called on a non-scrolling `Area`, this function's behavior is undefined.
-    pub unsafe fn scroll_to(&self, _ctx: &UI, x: f64, y: f64, width: f64, height: f64) {
+    pub unsafe fn scroll_to(&self, x: f64, y: f64, width: f64, height: f64) {
         // TODO: Make some way to check whether the given area is scrolling or not.
         ui_sys::uiAreaScrollTo(self.uiArea, x, y, width, height);
     }

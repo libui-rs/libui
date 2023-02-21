@@ -32,12 +32,12 @@ fn main() {
     
     let mut win = Window::new(&ui, "Example", 300, 200, 
         WindowType::NoMenubar);
-    let layout = VerticalBox::new(&ui);
+    let layout = VerticalBox::new();
 
     // add controls to your layout here
 
-    win.set_child(&ui, layout);
-    win.show(&ui);
+    win.set_child(layout);
+    win.show();
     ui.main();
 }
 ```

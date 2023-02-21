@@ -19,7 +19,7 @@ pub enum DateTimePickerKind {
 
 impl DateTimePicker {
     /// Create a new date and/or time picker.
-    pub fn new(_ctx: &UI, mode: DateTimePickerKind) -> DateTimePicker {
+    pub fn new(mode: DateTimePickerKind) -> DateTimePicker {
         unsafe {
             DateTimePicker::from_raw(match mode {
                 DateTimePickerKind::DateTime => ui_sys::uiNewDateTimePicker(),
@@ -35,7 +35,7 @@ impl DateTimePicker {
     /// will not be set and instead contain their unix epoch default.
     ///
     /// Warning: The `struct tm` member `tm_isdst` is unused on Windows and will be `-1`.
-    pub fn datetime(&self, _ctx: &UI) -> libc::tm {
+    pub fn datetime(&self) -> libc::tm {
         unsafe {
             let mut datetime = libc::tm {
                 tm_sec: 0,
@@ -59,7 +59,7 @@ impl DateTimePicker {
     /// Sets date and time of the DateTimePicker.
     ///
     /// Warning: The `struct tm` member `tm_isdst` is ignored on Windows and should be set to `-1`
-    pub fn set_datetime(&self, _ctx: &UI, datetime: libc::tm) {
+    pub fn set_datetime(&self, datetime: libc::tm) {
         unsafe {
             let ptr = &datetime as *const libc::tm;
             ui_sys::uiDateTimePickerSetTime(self.uiDateTimePicker, ptr as *const ui_sys::tm);

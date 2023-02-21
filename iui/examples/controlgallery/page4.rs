@@ -61,30 +61,30 @@ impl TableDataSource for MyDataSource {
         }
     }
 
-    fn set_cell(&mut self, column: i32, row: i32, value: TableValue) {
+    fn set_cell(&mut self, _column: i32, _row: i32, _value: TableValue) {
         todo!()
     }
 }
 
-pub fn make_table_page(ui: UI) -> Control {
-    let mut vbox = VerticalBox::new(&ui);
-    vbox.set_padded(&ui, true);
+pub fn make_table_page(_ui: UI) -> Control {
+    let mut vbox = VerticalBox::new();
+    vbox.set_padded(true);
 
     let name_params = TextColumnParameters {
         text_color_column: 2,
     };
 
     let data = Rc::new(RefCell::new(MyDataSource::default()));
-    let model = Rc::new(RefCell::new(TableModel::new(&ui, data.clone())));
+    let model = Rc::new(RefCell::new(TableModel::new(data.clone())));
     let params = TableParameters::new(model.clone());
-    let mut table = Table::new(&ui, params);
+    let mut table = Table::new(params);
 
-    table.append_text_column(&ui, "ID", 0, Table::COLUMN_READONLY);
-    table.append_text_column_with_params(&ui, "Name", 1, Table::COLUMN_READONLY, name_params);
-    table.append_checkbox_column(&ui, "Availability", 3, Table::COLUMN_READONLY);
-    table.append_progressbar_column(&ui, "Stock", 4);
-    table.append_button_column(&ui, "", 5, Table::COLUMN_EDITABLE);
+    table.append_text_column("ID", 0, Table::COLUMN_READONLY);
+    table.append_text_column_with_params("Name", 1, Table::COLUMN_READONLY, name_params);
+    table.append_checkbox_column("Availability", 3, Table::COLUMN_READONLY);
+    table.append_progressbar_column("Stock", 4);
+    table.append_button_column("", 5, Table::COLUMN_EDITABLE);
 
-    vbox.append(&ui, table, LayoutStrategy::Stretchy);
+    vbox.append(table, LayoutStrategy::Stretchy);
     return vbox.into();
 }

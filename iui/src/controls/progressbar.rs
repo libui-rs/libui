@@ -1,6 +1,5 @@
 use super::Control;
 use std::mem;
-use ui::UI;
 use ui_sys::{self, uiControl, uiProgressBar};
 
 /// An enum representing the value of a `ProgressBar`.
@@ -21,17 +20,17 @@ use ui_sys::{self, uiControl, uiProgressBar};
 /// # use iui::controls::{ProgressBar, ProgressBarValue};
 /// # let ui = UI::init().unwrap();
 /// # if cfg!(target_os = "macos") { return; }
-/// # let mut window = Window::new(&ui, "Test Window", 0, 0, WindowType::NoMenubar);
-/// let mut progressbar = ProgressBar::indeterminate(&ui);
-/// progressbar.set_value(&ui, 54);
+/// # let mut window = Window::new("Test Window", 0, 0, WindowType::NoMenubar);
+/// let mut progressbar = ProgressBar::indeterminate();
+/// progressbar.set_value(54);
 ///
 /// // Perhaps this is the result of some fallible progress-checking function.
 /// let maybe_progress: Option<u32> = None;
-/// progressbar.set_value(&ui, maybe_progress);
+/// progressbar.set_value(maybe_progress);
 ///
 /// // And of course, you can always set it by hand.
-/// progressbar.set_value(&ui, ProgressBarValue::Indeterminate);
-/// # window.set_child(&ui, progressbar);
+/// progressbar.set_value(ProgressBarValue::Indeterminate);
+/// # window.set_child(progressbar);
 /// # ui.quit();
 /// # ui.main();
 /// ```
@@ -84,15 +83,15 @@ impl ProgressBar {
     }
 
     /// Create a new indeterminate progress bar
-    pub fn indeterminate(ctx: &UI) -> ProgressBar {
+    pub fn indeterminate() -> ProgressBar {
         let mut pb = ProgressBar::new();
-        pb.set_value(ctx, ProgressBarValue::Indeterminate);
+        pb.set_value(ProgressBarValue::Indeterminate);
         pb
     }
 
     /// Set the value of the progress bar. See [`ProgressBarValue`] for the values that can be passed in.
     /// [`ProgressBarValue`]: enum.ProgressBarValue.html
-    pub fn set_value<V: Into<ProgressBarValue>>(&mut self, _ctx: &UI, value: V) {
+    pub fn set_value<V: Into<ProgressBarValue>>(&mut self, value: V) {
         let sys_value = match value.into() {
             ProgressBarValue::Determinate(value) => {
                 let value = if value > 100 { 100 } else { value };
@@ -104,7 +103,7 @@ impl ProgressBar {
     }
 
     /// Get the value of the progress bar
-    pub fn value(&self, _ctx: &UI) -> ProgressBarValue {
+    pub fn value(&self) -> ProgressBarValue {
         let sys_value = unsafe { ui_sys::uiProgressBarValue(self.uiProgressBar) };
         if sys_value.is_negative() {
             assert!(

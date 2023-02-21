@@ -15,16 +15,16 @@ define_control! {
 
 impl Checkbox {
     // Create a new Checkbox which can produce values from `min` to `max`.
-    pub fn new(_ctx: &UI, text: &str) -> Self {
+    pub fn new(text: &str) -> Self {
         let c_string = to_toolkit_string(text);
         unsafe { Checkbox::from_raw(ui_sys::uiNewCheckbox(c_string.as_ptr())) }
     }
 
-    pub fn checked(&self, _ctx: &UI) -> bool {
+    pub fn checked(&self) -> bool {
         unsafe { ui_sys::uiCheckboxChecked(self.uiCheckbox) != 0 }
     }
 
-    pub fn set_checked(&mut self, _ctx: &UI, checked: bool) {
+    pub fn set_checked(&mut self, checked: bool) {
         unsafe { ui_sys::uiCheckboxSetChecked(self.uiCheckbox, checked as i32) }
     }
 

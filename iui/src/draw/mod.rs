@@ -25,7 +25,7 @@ pub use ui_sys::uiDrawDefaultMiterLimit as DEFAULT_MITER_LIMIT;
 // }
 
 // impl FontFamilies {
-//     pub fn list(_ctx: &UI) ->  FontFamilies {
+//     pub fn list() ->  FontFamilies {
 //         unsafe {
 //             FontFamilies {
 //                 ui_draw_font_families: ui_sys::uiDrawListFontFamilies(),
@@ -33,7 +33,7 @@ pub use ui_sys::uiDrawDefaultMiterLimit as DEFAULT_MITER_LIMIT;
 //         }
 //     }
 
-//     pub fn len(&self, _ctx: &UI) -> u64 {
+//     pub fn len(&self) -> u64 {
 //         unsafe { ui_sys::uiDrawFontFamiliesNumFamilies(self.ui_draw_font_families) }
 //     }
 
@@ -72,7 +72,7 @@ pub use ui_sys::uiDrawDefaultMiterLimit as DEFAULT_MITER_LIMIT;
 //     impl FontDescriptor {
 
 //         pub fn new(
-//             _ctx: &UI,
+//             
 //             family: &str,
 //             size: f64,
 //             weight: Weight,
@@ -90,7 +90,7 @@ pub use ui_sys::uiDrawDefaultMiterLimit as DEFAULT_MITER_LIMIT;
 
 //         /// FIXME(pcwalton): Should this return an Option?
 
-//         pub fn load_closest_font(&self, _ctx: &UI) -> Font {
+//         pub fn load_closest_font(&self) -> Font {
 //             unsafe {
 //                 let font_descriptor = uiDrawTextFontDescriptor {
 //                     Family: self.family.as_ptr(),
@@ -129,11 +129,11 @@ pub use ui_sys::uiDrawDefaultMiterLimit as DEFAULT_MITER_LIMIT;
 //             }
 //         }
 
-//         pub fn handle(&self, _ctx: &UI) -> usize {
+//         pub fn handle(&self) -> usize {
 //             unsafe { ui_sys::uiDrawTextFontHandle(self.ui_draw_text_font) }
 //         }
 
-//         pub fn describe(&self, _ctx: &UI) -> FontDescriptor {
+//         pub fn describe(&self) -> FontDescriptor {
 //             unsafe {
 //                 let mut ui_draw_text_font_descriptor = mem::uninitialized();
 //                 ui_sys::uiDrawTextFontDescribe(
@@ -155,7 +155,7 @@ pub use ui_sys::uiDrawDefaultMiterLimit as DEFAULT_MITER_LIMIT;
 //             }
 //         }
 
-//         pub fn metrics(&self, _ctx: &UI) -> FontMetrics {
+//         pub fn metrics(&self) -> FontMetrics {
 //             unsafe {
 //                 let mut metrics = mem::uninitialized();
 //                 ui_sys::uiDrawTextFontGetMetrics(self.ui_draw_text_font, &mut metrics);
@@ -177,7 +177,7 @@ pub use ui_sys::uiDrawDefaultMiterLimit as DEFAULT_MITER_LIMIT;
 
 //     impl Layout {
 
-//         pub fn new(_ctx: &UI, text: &str, default_font: &Font, width: f64) -> Layout {
+//         pub fn new( text: &str, default_font: &Font, width: f64) -> Layout {
 //             unsafe {
 //                 let c_string = CString::new(text.as_bytes().to_vec()).unwrap();
 //                 Layout {
@@ -194,11 +194,11 @@ pub use ui_sys::uiDrawDefaultMiterLimit as DEFAULT_MITER_LIMIT;
 //             self.ui_draw_text_layout
 //         }
 
-//         pub fn set_width(&self, _ctx: &UI, width: f64) {
+//         pub fn set_width(&self,  width: f64) {
 //             unsafe { ui_sys::uiDrawTextLayoutSetWidth(self.ui_draw_text_layout, width) }
 //         }
 
-//         pub fn extents(&self, _ctx: &UI) -> (f64, f64) {
+//         pub fn extents(&self) -> (f64, f64) {
 //             unsafe {
 //                 let mut extents = (0.0, 0.0);
 //                 ui_sys::uiDrawTextLayoutExtents(
@@ -210,7 +210,7 @@ pub use ui_sys::uiDrawDefaultMiterLimit as DEFAULT_MITER_LIMIT;
 //             }
 //         }
 
-//         pub fn set_color(&self, _ctx: &UI, start_char: i64, end_char: i64, r: f64, g: f64, b: f64, a: f64) {
+//         pub fn set_color(&self,  start_char: i64, end_char: i64, r: f64, g: f64, b: f64, a: f64) {
 //             unsafe {
 //                 ui_sys::uiDrawTextLayoutSetColor(
 //                     self.ui_draw_text_layout,

@@ -13,22 +13,22 @@ define_control! {
 }
 
 impl RadioButtons {
-    pub fn new(_ctx: &UI) -> Self {
+    pub fn new() -> Self {
         unsafe { RadioButtons::from_raw(ui_sys::uiNewRadioButtons()) }
     }
 
-    pub fn append(&self, _ctx: &UI, name: &str) {
+    pub fn append(&self, name: &str) {
         let c_string = CString::new(name.as_bytes().to_vec()).unwrap();
         unsafe {
             ui_sys::uiRadioButtonsAppend(self.uiRadioButtons, c_string.as_ptr());
         }
     }
 
-    pub fn selected(&self, _ctx: &UI) -> i32 {
+    pub fn selected(&self) -> i32 {
         unsafe { ui_sys::uiRadioButtonsSelected(self.uiRadioButtons) }
     }
 
-    pub fn set_selected(&mut self, _ctx: &UI, idx: i32) {
+    pub fn set_selected(&mut self, idx: i32) {
         unsafe {
             ui_sys::uiRadioButtonsSetSelected(self.uiRadioButtons, idx);
         }

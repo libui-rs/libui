@@ -88,12 +88,12 @@ define_control! {
 
 impl FontButton {
     /// Creates a new font button.
-    pub fn new(_ctx: &UI) -> FontButton {
+    pub fn new() -> FontButton {
         unsafe { FontButton::from_raw(ui_sys::uiNewFontButton()) }
     }
 
     /// Returns the selected font.
-    pub fn font(&self, _ctx: &UI) -> FontDescription {
+    pub fn font(&self) -> FontDescription {
         unsafe {
             let mut cfd: uiFontDescriptor = { MaybeUninit::zeroed().assume_init() };
 

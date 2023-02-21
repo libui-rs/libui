@@ -57,13 +57,13 @@ impl Window {
         });
 
         // Windows, by default, draw margins
-        window.set_margined(_ctx, true);
+        window.set_margined(true);
 
         window
     }
 
     /// Get the current title of the window.
-    pub fn title(&self, _ctx: &UI) -> String {
+    pub fn title(&self) -> String {
         unsafe {
             CStr::from_ptr(ui_sys::uiWindowTitle(self.uiWindow))
                 .to_string_lossy()
@@ -72,12 +72,12 @@ impl Window {
     }
 
     /// Get a reference to the current title of the window.
-    pub fn title_ref(&self, _ctx: &UI) -> &CStr {
+    pub fn title_ref(&self) -> &CStr {
         unsafe { &CStr::from_ptr(ui_sys::uiWindowTitle(self.uiWindow)) }
     }
 
     /// Set the window's title to the given string.
-    pub fn set_title(&mut self, _ctx: &UI, title: &str) {
+    pub fn set_title(&mut self, title: &str) {
         unsafe {
             let c_string = CString::new(title.as_bytes().to_vec()).unwrap();
             ui_sys::uiWindowSetTitle(self.uiWindow, c_string.as_ptr())
@@ -109,22 +109,22 @@ impl Window {
     }
 
     /// Check whether or not this window has margins around the edges.
-    pub fn margined(&self, _ctx: &UI) -> bool {
+    pub fn margined(&self) -> bool {
         unsafe { ui_sys::uiWindowMargined(self.uiWindow) != 0 }
     }
 
     /// Set whether or not the window has margins around the edges.
-    pub fn set_margined(&mut self, _ctx: &UI, margined: bool) {
+    pub fn set_margined(&mut self, margined: bool) {
         unsafe { ui_sys::uiWindowSetMargined(self.uiWindow, margined as c_int) }
     }
 
     /// Sets the window's child widget. The window can only have one child widget at a time.
-    pub fn set_child<T: Into<Control>>(&mut self, _ctx: &UI, child: T) {
+    pub fn set_child<T: Into<Control>>(&mut self, child: T) {
         unsafe { ui_sys::uiWindowSetChild(self.uiWindow, child.into().as_ui_control()) }
     }
 
     /// Allow the user to select an existing file using the systems file dialog
-    pub fn open_file(&self, _ctx: &UI) -> Option<PathBuf> {
+    pub fn open_file(&self) -> Option<PathBuf> {
         let ptr = unsafe { ui_sys::uiOpenFile(self.uiWindow) };
         if ptr.is_null() {
             return None;
@@ -137,7 +137,7 @@ impl Window {
     }
 
     /// Allow the user to select a new or existing file using the systems file dialog.
-    pub fn save_file(&self, _ctx: &UI) -> Option<PathBuf> {
+    pub fn save_file(&self) -> Option<PathBuf> {
         let ptr = unsafe { ui_sys::uiSaveFile(self.uiWindow) };
         if ptr.is_null() {
             return None;
@@ -150,7 +150,7 @@ impl Window {
     }
 
     /// Allow the user to select a single folder using the systems folder dialog.
-    pub fn open_folder(&self, _ctx: &UI) -> Option<PathBuf> {
+    pub fn open_folder(&self) -> Option<PathBuf> {
         let ptr = unsafe { ui_sys::uiOpenFolder(self.uiWindow) };
         if ptr.is_null() {
             return None;
@@ -164,7 +164,7 @@ impl Window {
 
     /// Open a generic message box to show a message to the user.
     /// Returns when the user acknowledges the message.
-    pub fn modal_msg(&self, _ctx: &UI, title: &str, description: &str) {
+    pub fn modal_msg(&self, title: &str, description: &str) {
         unsafe {
             let c_title = CString::new(title.as_bytes().to_vec()).unwrap();
             let c_description = CString::new(description.as_bytes().to_vec()).unwrap();
@@ -174,7 +174,7 @@ impl Window {
 
     /// Open an error-themed message box to show a message to the user.
     /// Returns when the user acknowledges the message.
-    pub fn modal_err(&self, _ctx: &UI, title: &str, description: &str) {
+    pub fn modal_err(&self, title: &str, description: &str) {
         unsafe {
             let c_title = CString::new(title.as_bytes().to_vec()).unwrap();
             let c_description = CString::new(description.as_bytes().to_vec()).unwrap();

@@ -13,12 +13,12 @@ define_control! {
 
 impl ColorButton {
     /// Create a new color button.
-    pub fn new(_ctx: &UI) -> ColorButton {
+    pub fn new() -> ColorButton {
         unsafe { ColorButton::from_raw(ui_sys::uiNewColorButton()) }
     }
 
     /// Get the selected color as RGBA with values in range of [0, 1.0] per component.
-    pub fn color(&self, _ctx: &UI) -> (f64, f64, f64, f64) {
+    pub fn color(&self) -> (f64, f64, f64, f64) {
         unsafe {
             let (mut r, mut g, mut b, mut a) = (0.0, 0.0, 0.0, 0.0);
             ui_sys::uiColorButtonColor(self.uiColorButton, &mut r, &mut g, &mut b, &mut a);
@@ -27,7 +27,7 @@ impl ColorButton {
     }
 
     /// Set the buttons selected color. Component are in the range of [0, 1.0].
-    pub fn set_color(&mut self, _ctx: &UI, r: f64, g: f64, b: f64, a: f64) {
+    pub fn set_color(&mut self, r: f64, g: f64, b: f64, a: f64) {
         unsafe {
             ui_sys::uiColorButtonSetColor(self.uiColorButton, r, g, b, a);
         }

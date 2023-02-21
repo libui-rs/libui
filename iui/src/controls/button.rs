@@ -3,7 +3,6 @@ use callback_helpers::{from_void_ptr, to_heap_ptr};
 use std::ffi::{CStr, CString};
 use std::mem;
 use std::os::raw::c_void;
-use ui::UI;
 use ui_sys::{self, uiButton, uiControl};
 
 define_control! {
@@ -14,7 +13,7 @@ define_control! {
 
 impl Button {
     /// Create a new button with the given text as its label.
-    pub fn new(_ctx: &UI, text: &str) -> Button {
+    pub fn new(text: &str) -> Button {
         unsafe {
             let c_string = CString::new(text.as_bytes().to_vec()).unwrap();
             Button::from_raw(ui_sys::uiNewButton(c_string.as_ptr()))
@@ -22,7 +21,7 @@ impl Button {
     }
 
     /// Get a copy of the existing text on the button.
-    pub fn text(&self, _ctx: &UI) -> String {
+    pub fn text(&self) -> String {
         unsafe {
             CStr::from_ptr(ui_sys::uiButtonText(self.uiButton))
                 .to_string_lossy()
@@ -31,12 +30,12 @@ impl Button {
     }
 
     /// Get a reference to the existing text on the button.
-    pub fn text_ref(&self, _ctx: &UI) -> &CStr {
+    pub fn text_ref(&self) -> &CStr {
         unsafe { CStr::from_ptr(ui_sys::uiButtonText(self.uiButton)) }
     }
 
     /// Set the text on the button.
-    pub fn set_text(&mut self, _ctx: &UI, text: &str) {
+    pub fn set_text(&mut self, text: &str) {
         unsafe {
             let c_string = CString::new(text.as_bytes().to_vec()).unwrap();
             ui_sys::uiButtonSetText(self.uiButton, c_string.as_ptr())
@@ -44,7 +43,7 @@ impl Button {
     }
 
     /// Run the given callback when the button is clicked.
-    pub fn on_clicked<'ctx, F>(&mut self, _ctx: &'ctx UI, callback: F)
+    pub fn on_clicked<'ctx, F>(&mut self, callback: F)
     where
         F: FnMut(&mut Button) + 'static,
     {

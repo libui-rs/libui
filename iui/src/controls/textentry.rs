@@ -7,16 +7,15 @@ use super::Control;
 use callback_helpers::{from_void_ptr, to_heap_ptr};
 use std::ffi::{CStr, CString};
 use std::mem;
-use std::os::raw::c_void;
 use std::os::raw::c_int;
+use std::os::raw::c_void;
 use str_tools::{from_toolkit_string, to_toolkit_string};
-use ui::UI;
 use ui_sys::{self, uiControl, uiEntry, uiMultilineEntry};
 
 pub trait TextEntry {
-    fn value(&self, ctx: &UI) -> String;
-    fn set_value(&mut self, ctx: &UI, value: &str);
-    fn on_changed<'ctx, F: FnMut(String) + 'static>(&mut self, ctx: &'ctx UI, callback: F);
+    fn value(&self) -> String;
+    fn set_value(&mut self, value: &str);
+    fn on_changed<'ctx, F: FnMut(String) + 'static>(&mut self, callback: F);
 }
 
 define_control! {
@@ -44,53 +43,53 @@ define_control! {
 }
 
 impl Entry {
-    pub fn new(_ctx: &UI) -> Entry {
+    pub fn new() -> Entry {
         unsafe { Entry::from_raw(ui_sys::uiNewEntry()) }
     }
 }
 
 impl PasswordEntry {
-    pub fn new(_ctx: &UI) -> PasswordEntry {
+    pub fn new() -> PasswordEntry {
         unsafe { PasswordEntry::from_raw(ui_sys::uiNewPasswordEntry()) }
     }
 }
 
 impl SearchEntry {
-    pub fn new(_ctx: &UI) -> SearchEntry {
+    pub fn new() -> SearchEntry {
         unsafe { SearchEntry::from_raw(ui_sys::uiNewSearchEntry()) }
     }
 }
 
 impl MultilineEntry {
-    pub fn new(_ctx: &UI) -> MultilineEntry {
+    pub fn new() -> MultilineEntry {
         unsafe { MultilineEntry::from_raw(ui_sys::uiNewMultilineEntry()) }
     }
 
-    pub fn append(&mut self, _ctx: &UI, value: &str) {
+    pub fn append(&mut self, value: &str) {
         let cstring = to_toolkit_string(value);
         unsafe { ui_sys::uiMultilineEntryAppend(self.uiMultilineEntry, cstring.as_ptr()) }
     }
 
-    pub fn readonly(&self, _ctx: &UI) -> bool {
+    pub fn readonly(&self) -> bool {
         unsafe { ui_sys::uiMultilineEntryReadOnly(self.uiMultilineEntry) != 0 }
     }
 
-    pub fn set_readonly(&mut self, _ctx: &UI, readonly: bool) {
+    pub fn set_readonly(&mut self, readonly: bool) {
         unsafe { ui_sys::uiMultilineEntrySetReadOnly(self.uiMultilineEntry, readonly as c_int) }
     }
 }
 
 impl TextEntry for Entry {
-    fn value(&self, _ctx: &UI) -> String {
+    fn value(&self) -> String {
         unsafe { from_toolkit_string(ui_sys::uiEntryText(self.uiEntry)) }
     }
 
-    fn set_value(&mut self, _ctx: &UI, value: &str) {
+    fn set_value(&mut self, value: &str) {
         let cstring = to_toolkit_string(value);
         unsafe { ui_sys::uiEntrySetText(self.uiEntry, cstring.as_ptr()) }
     }
 
-    fn on_changed<'ctx, F>(&mut self, _ctx: &'ctx UI, callback: F)
+    fn on_changed<'ctx, F>(&mut self, callback: F)
     where
         F: FnMut(String) + 'static,
     {
@@ -111,7 +110,7 @@ impl TextEntry for Entry {
 }
 
 impl TextEntry for PasswordEntry {
-    fn value(&self, _ctx: &UI) -> String {
+    fn value(&self) -> String {
         unsafe {
             CStr::from_ptr(ui_sys::uiEntryText(self.uiEntry))
                 .to_string_lossy()
@@ -119,12 +118,12 @@ impl TextEntry for PasswordEntry {
         }
     }
 
-    fn set_value(&mut self, _ctx: &UI, value: &str) {
+    fn set_value(&mut self, value: &str) {
         let cstring = CString::new(value.as_bytes().to_vec()).unwrap();
         unsafe { ui_sys::uiEntrySetText(self.uiEntry, cstring.as_ptr()) }
     }
 
-    fn on_changed<'ctx, F: FnMut(String) + 'static>(&mut self, _ctx: &'ctx UI, callback: F) {
+    fn on_changed<'ctx, F: FnMut(String) + 'static>(&mut self, callback: F) {
         unsafe {
             let mut data: Box<Box<dyn FnMut(String)>> = Box::new(Box::new(callback));
             ui_sys::uiEntryOnChanged(
@@ -146,17 +145,17 @@ impl TextEntry for PasswordEntry {
 }
 
 impl TextEntry for SearchEntry {
-    fn value(&self, _ctx: &UI) -> String {
+    fn value(&self) -> String {
         unsafe { from_toolkit_string(ui_sys::uiEntryText(self.uiEntry)) }
     }
 
-    fn set_value(&mut self, _ctx: &UI, value: &str) {
+    fn set_value(&mut self, value: &str) {
         let cstring = to_toolkit_string(value);
         unsafe { ui_sys::uiEntrySetText(self.uiEntry, cstring.as_ptr()) }
     }
 
     /// Some systems will deliberately delay the callback for a more natural feel.
-    fn on_changed<'ctx, F>(&mut self, _ctx: &'ctx UI, callback: F)
+    fn on_changed<'ctx, F>(&mut self, callback: F)
     where
         F: FnMut(String) + 'static,
     {
@@ -177,16 +176,16 @@ impl TextEntry for SearchEntry {
 }
 
 impl TextEntry for MultilineEntry {
-    fn value(&self, _ctx: &UI) -> String {
+    fn value(&self) -> String {
         unsafe { from_toolkit_string(ui_sys::uiMultilineEntryText(self.uiMultilineEntry)) }
     }
 
-    fn set_value(&mut self, _ctx: &UI, value: &str) {
+    fn set_value(&mut self, value: &str) {
         let cstring = to_toolkit_string(value);
         unsafe { ui_sys::uiMultilineEntrySetText(self.uiMultilineEntry, cstring.as_ptr()) }
     }
 
-    fn on_changed<'ctx, F>(&mut self, _ctx: &'ctx UI, callback: F)
+    fn on_changed<'ctx, F>(&mut self, callback: F)
     where
         F: FnMut(String) + 'static,
     {

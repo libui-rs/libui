@@ -16,12 +16,12 @@ define_control! {
 
 impl Combobox {
     /// Create a new Combobox
-    pub fn new(_ctx: &UI) -> Self {
+    pub fn new() -> Self {
         unsafe { Combobox::from_raw(ui_sys::uiNewCombobox()) }
     }
 
     /// Adds a new option to the combo box.
-    pub fn append(&self, _ctx: &UI, name: &str) {
+    pub fn append(&self, name: &str) {
         unsafe {
             let c_string = to_toolkit_string(name);
             ui_sys::uiComboboxAppend(self.uiCombobox, c_string.as_ptr())
@@ -29,7 +29,7 @@ impl Combobox {
     }
 
     /// Inserts an item at index to the combo box.
-    pub fn insert_at(&self, _ctx: &UI, index: i32, name: &str) {
+    pub fn insert_at(&self, index: i32, name: &str) {
         unsafe {
             let c_string = to_toolkit_string(name);
             ui_sys::uiComboboxInsertAt(self.uiCombobox, index, c_string.as_ptr())
@@ -40,27 +40,27 @@ impl Combobox {
     ///
     /// Deleting the index of the item currently selected will move the
     /// selection to the next item in the combo box or `-1` if no such item exists.
-    pub fn delete(&self, _ctx: &UI, index: i32) {
+    pub fn delete(&self, index: i32) {
         unsafe { ui_sys::uiComboboxDelete(self.uiCombobox, index) }
     }
 
     /// Deletes all items from the combo box.
-    pub fn clear(&self, _ctx: &UI) {
+    pub fn clear(&self) {
         unsafe { ui_sys::uiComboboxClear(self.uiCombobox) }
     }
 
     /// Returns the number of items contained within the combo box.
-    pub fn count(&self, _ctx: &UI) -> i32 {
+    pub fn count(&self) -> i32 {
         unsafe { ui_sys::uiComboboxNumItems(self.uiCombobox) }
     }
 
     /// Returns the index of the currently selected option.
-    pub fn selected(&self, _ctx: &UI) -> i32 {
+    pub fn selected(&self) -> i32 {
         unsafe { ui_sys::uiComboboxSelected(self.uiCombobox) }
     }
 
     /// Selects an item by its index
-    pub fn set_selected(&mut self, _ctx: &UI, value: i32) {
+    pub fn set_selected(&mut self, value: i32) {
         unsafe { ui_sys::uiComboboxSetSelected(self.uiCombobox, value) }
     }
 
@@ -94,12 +94,12 @@ define_control! {
 
 impl EditableCombobox {
     /// Creates a new editable combobox.
-    pub fn new(_ctx: &UI) -> EditableCombobox {
+    pub fn new() -> EditableCombobox {
         unsafe { EditableCombobox::from_raw(ui_sys::uiNewEditableCombobox()) }
     }
 
     /// Adds a new option to the combobox.
-    pub fn append(&self, _ctx: &UI, name: &str) {
+    pub fn append(&self, name: &str) {
         unsafe {
             let c_string = to_toolkit_string(name);
             ui_sys::uiEditableComboboxAppend(self.uiEditableCombobox, c_string.as_ptr())
@@ -110,7 +110,7 @@ impl EditableCombobox {
     //
     // This text is either the text of one of the predefined
     // list items or the text manually entered by the user.
-    pub fn value(&self, _ctx: &UI) -> String {
+    pub fn value(&self) -> String {
         let ptr = unsafe { ui_sys::uiEditableComboboxText(self.uiEditableCombobox) };
         let text: String = unsafe { CStr::from_ptr(ptr).to_string_lossy().into() };
         unsafe {
@@ -120,7 +120,7 @@ impl EditableCombobox {
     }
 
     // Sets the editable combobox text.
-    pub fn set_value(&mut self, _ctx: &UI, value: &str) {
+    pub fn set_value(&mut self, value: &str) {
         let cstring = to_toolkit_string(value);
         unsafe { ui_sys::uiEditableComboboxSetText(self.uiEditableCombobox, cstring.as_ptr()) }
     }

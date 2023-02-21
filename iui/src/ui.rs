@@ -101,7 +101,7 @@ impl UI {
     ///
     /// For more control, use the `EventLoop` struct.
     pub fn main(&self) {
-        self.event_loop().run(self);
+        self.event_loop().run();
     }
 
     /// Returns an `EventLoop`, a struct that allows you to step over iterations or events in the UI.
@@ -178,7 +178,7 @@ impl<'s> EventLoop<'s> {
     /// Set the given callback to run when the event loop is executed.
     /// Note that if integrating other event loops you should consider
     /// the potential benefits and drawbacks of the various run modes.
-    pub fn on_tick<'ctx, F: FnMut() + 's + 'ctx>(&'ctx mut self, _ctx: &'ctx UI, callback: F) {
+    pub fn on_tick<'ctx, F: FnMut() + 's + 'ctx>(&'ctx mut self, callback: F) {
         self.callback = Some(Box::new(callback));
     }
 
@@ -187,7 +187,7 @@ impl<'s> EventLoop<'s> {
     ///
     /// Returns `true` if the application should continue running, and `false`
     /// if it should quit.
-    pub fn next_tick(&mut self, _ctx: &UI) -> bool {
+    pub fn next_tick(&mut self) -> bool {
         let result = unsafe { ui_sys::uiMainStep(false as c_int) == 1 };
         if let Some(ref mut c) = self.callback {
             c();
@@ -200,7 +200,7 @@ impl<'s> EventLoop<'s> {
     ///
     /// Returns `true` if the application should continue running, and `false`
     /// if it should quit.
-    pub fn next_event_tick(&mut self, _ctx: &UI) -> bool {
+    pub fn next_event_tick(&mut self) -> bool {
         let result = unsafe { ui_sys::uiMainStep(true as c_int) == 1 };
         if let Some(ref mut c) = self.callback {
             c();
@@ -210,9 +210,9 @@ impl<'s> EventLoop<'s> {
 
     /// Hands control to the event loop until [`UI::quit()`](struct.UI.html#method.quit) is called,
     /// running the callback given with `on_tick` after each UI event.
-    pub fn run(&mut self, ctx: &UI) {
+    pub fn run(&mut self) {
         loop {
-            if !self.next_event_tick(ctx) {
+            if !self.next_event_tick() {
                 break;
             }
         }
@@ -221,7 +221,7 @@ impl<'s> EventLoop<'s> {
     /// Hands control to the event loop until [`UI::quit()`](struct.UI.html#method.quit) is called,
     /// running the callback given with `on_tick` approximately every
     /// `delay` milliseconds.
-    pub fn run_delay(&mut self, ctx: &UI, delay_ms: u32) {
+    pub fn run_delay(&mut self, delay_ms: u32) {
         if let Some(ref mut c) = self.callback {
             let delay_ms = delay_ms as u128;
             let mut t0 = SystemTime::now();
@@ -242,7 +242,7 @@ impl<'s> EventLoop<'s> {
                 thread::sleep(Duration::from_millis(5));
             }
         } else {
-            self.run(ctx)
+            self.run()
         }
     }
 }

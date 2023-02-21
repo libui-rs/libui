@@ -23,25 +23,25 @@ pub struct Menu {
 
 impl MenuItem {
     /// Enables the item, allowing it to be selected. This is the default state of a menu item.
-    pub fn enable(&self, _ctx: &UI) {
+    pub fn enable(&self) {
         unsafe { ui_sys::uiMenuItemEnable(self.ui_menu_item) }
     }
 
     /// Disables the item, preventing it from being selected and providing a visual cue to the
     /// user that it cannot be selected.
-    pub fn disable(&self, _ctx: &UI) {
+    pub fn disable(&self) {
         unsafe { ui_sys::uiMenuItemDisable(self.ui_menu_item) }
     }
 
     /// Returns `true` if the menu item is checked, and false if it is not checked (or not checkable).
-    pub fn checked(&self, _ctx: &UI) -> bool {
+    pub fn checked(&self) -> bool {
         unsafe { ui_sys::uiMenuItemChecked(self.ui_menu_item) != 0 }
     }
 
     /// Sets the menu item to either checked or unchecked based on the given value.
     ///
     /// Setting the checked value of a non-checkable menu item has no effect.
-    pub fn set_checked(&self, _ctx: &UI, checked: bool) {
+    pub fn set_checked(&self, checked: bool) {
         unsafe { ui_sys::uiMenuItemSetChecked(self.ui_menu_item, checked as c_int) }
     }
 
@@ -78,7 +78,7 @@ impl MenuItem {
 
 impl Menu {
     /// Creates a new menu with the given name to be displayed in the menubar at the top of the window.
-    pub fn new(_ctx: &UI, name: &str) -> Menu {
+    pub fn new(name: &str) -> Menu {
         unsafe {
             let c_string = CString::new(name.as_bytes().to_vec()).unwrap();
             Menu {

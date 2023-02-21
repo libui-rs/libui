@@ -5,7 +5,6 @@ use std::ffi::{CStr, CString};
 use std::mem;
 use std::os::raw::{c_int, c_void};
 use std::rc::Rc;
-use ui::UI;
 use ui_sys::{
     self, uiControl, uiTable, uiTableModel, uiTableModelHandler, uiTableParams, uiTableValue,
     uiTableValueType,
@@ -159,7 +158,7 @@ struct RustTableModelHandler {
 }
 
 impl RustTableModelHandler {
-    fn new(_ctx: &UI, trait_object: Rc<RefCell<dyn TableDataSource>>) -> Self {
+    fn new(trait_object: Rc<RefCell<dyn TableDataSource>>) -> Self {
         RustTableModelHandler {
             ui_table_model_handler: ui_sys::uiTableModelHandler {
                 NumColumns: Some(c_num_columns),
@@ -179,9 +178,9 @@ pub struct TableModel {
 }
 
 impl TableModel {
-    pub fn new(ctx: &UI, data_source: Rc<RefCell<dyn TableDataSource>>) -> TableModel {
+    pub fn new(data_source: Rc<RefCell<dyn TableDataSource>>) -> TableModel {
         unsafe {
-            let mut handler = Box::new(RustTableModelHandler::new(ctx, data_source));
+            let mut handler = Box::new(RustTableModelHandler::new(data_source));
             let ptr = handler.as_mut() as *mut RustTableModelHandler;
             TableModel {
                 ui_table_model: ui_sys::uiNewTableModel(ptr as *mut ui_sys::uiTableModelHandler),
@@ -297,7 +296,7 @@ impl Table {
     pub const COLUMN_EDITABLE: i32 = -2;
 
     /// Instantiates a new `Table` using the supplied model.
-    pub fn new(_ctx: &UI, params: TableParameters) -> Table {
+    pub fn new(params: TableParameters) -> Table {
         unsafe {
             let mut ui_params = uiTableParams {
                 Model: params.model.borrow().ui_table_model,
@@ -324,7 +323,7 @@ impl Table {
     ///                           for this parameter to make all rows either state.
     pub fn append_text_column(
         &mut self,
-        _ctx: &UI,
+
         title: &str,
         text_model_column: i32,
         state_model_column: i32,
@@ -352,7 +351,6 @@ impl Table {
     ///                           the table model, or be `-1` for using the default text color.
     pub fn append_text_column_with_params(
         &mut self,
-        _ctx: &UI,
         title: &str,
         text_model_column: i32,
         state_model_column: i32,
@@ -387,7 +385,6 @@ impl Table {
     ///                           for this parameter to make all rows either state.
     pub fn append_checkbox_column(
         &mut self,
-        _ctx: &UI,
         title: &str,
         check_model_column: i32,
         state_model_column: i32,
@@ -416,7 +413,6 @@ impl Table {
     /// * `text_state_model_colum`  - Defines whether or not the text is editable, analogous to `state_model_column`.
     pub fn append_checkbox_text_column(
         &mut self,
-        _ctx: &UI,
         title: &str,
         check_model_column: i32,
         state_model_column: i32,
@@ -442,7 +438,7 @@ impl Table {
     /// * `title`           - The columns header.
     /// * `model_column`    - Index to the model column with the progessbar data.
     ///                       Values must be of [`TableValue::Int`], between -1 and 100 representing the current progress.
-    pub fn append_progressbar_column(&mut self, _ctx: &UI, title: &str, model_column: i32) {
+    pub fn append_progressbar_column(&mut self, title: &str, model_column: i32) {
         unsafe {
             let c_title = CString::new(title.as_bytes().to_vec()).unwrap();
             ui_sys::uiTableAppendProgressBarColumn(self.uiTable, c_title.as_ptr(), model_column);
@@ -460,7 +456,6 @@ impl Table {
     ///                           for this parameter to make all rows either state.
     pub fn append_button_column(
         &mut self,
-        _ctx: &UI,
         title: &str,
         btn_model_column: i32,
         state_model_column: i32,
@@ -477,19 +472,19 @@ impl Table {
     }
 
     /// Returns whether or not the table header is visible.
-    pub fn header_visible(&self, _ctx: &UI) -> bool {
+    pub fn header_visible(&self) -> bool {
         unsafe { ui_sys::uiTableHeaderVisible(self.uiTable) != 0 }
     }
 
     /// Sets whether or not the table header is visible.
-    pub fn set_header_visible(&mut self, _ctx: &UI, visible: bool) {
+    pub fn set_header_visible(&mut self, visible: bool) {
         unsafe {
             ui_sys::uiTableHeaderSetVisible(self.uiTable, visible as i32);
         }
     }
 
     /// Returns the column's sort indicator displayed in the table header.
-    pub fn sort_indicator(&self, _ctx: &UI, column: i32) -> SortIndicator {
+    pub fn sort_indicator(&self, column: i32) -> SortIndicator {
         let v = unsafe { ui_sys::uiTableHeaderSortIndicator(self.uiTable, column) };
         match v {
             ui_sys::uiSortIndicatorNone => SortIndicator::None,
@@ -503,7 +498,7 @@ impl Table {
     ///
     /// Use this to display appropriate arrows in the table header to indicate a sort direction.
     /// Setting the indicator is purely visual and does not perform any sorting.
-    pub fn set_sort_indicator(&mut self, _ctx: &UI, column: i32, indicator: SortIndicator) {
+    pub fn set_sort_indicator(&mut self, column: i32, indicator: SortIndicator) {
         let v = match indicator {
             SortIndicator::None => ui_sys::uiSortIndicatorNone,
             SortIndicator::Ascending => ui_sys::uiSortIndicatorAscending,
@@ -515,7 +510,7 @@ impl Table {
     }
 
     /// Returns the table column width in pixels.
-    pub fn column_width(&self, _ctx: &UI, column: i32) -> i32 {
+    pub fn column_width(&self, column: i32) -> i32 {
         unsafe { ui_sys::uiTableColumnWidth(self.uiTable, column) }
     }
 
@@ -524,14 +519,14 @@ impl Table {
     /// Setting the width to `-1` will restore automatic column sizing, matching
     /// either the width of the content or column header (which ever one is bigger).
     /// Note: Mac OS only resizes to the column header, not the content.
-    pub fn set_column_width(&mut self, _ctx: &UI, column: i32, width: i32) {
+    pub fn set_column_width(&mut self, column: i32, width: i32) {
         unsafe {
             ui_sys::uiTableColumnSetWidth(self.uiTable, column, width);
         }
     }
 
     /// Returns the table selection mode.
-    pub fn selection_mode(&self, _ctx: &UI) -> SelectionMode {
+    pub fn selection_mode(&self) -> SelectionMode {
         let v = unsafe { ui_sys::uiTableGetSelectionMode(self.uiTable) };
         match v {
             ui_sys::uiTableSelectionModeNone => SelectionMode::None,
@@ -545,7 +540,7 @@ impl Table {
     /// Sets the table selection mode.
     ///
     /// Note: All rows will be deselected if the existing selection is illegal in the new selection mode.
-    pub fn set_selection_mode(&mut self, _ctx: &UI, mode: SelectionMode) {
+    pub fn set_selection_mode(&mut self, mode: SelectionMode) {
         let v = match mode {
             SelectionMode::None => ui_sys::uiTableSelectionModeNone,
             SelectionMode::ZeroOrOne => ui_sys::uiTableSelectionModeZeroOrOne,
@@ -560,7 +555,7 @@ impl Table {
     /// Returns the current table selection.
     ///
     /// If nothing is selected, the vector will be empty.
-    pub fn selection(&self, _ctx: &UI) -> Vec<i32> {
+    pub fn selection(&self) -> Vec<i32> {
         let mut selection: Vec<i32> = vec![];
         unsafe {
             let s = ui_sys::uiTableGetSelection(self.uiTable);
@@ -577,7 +572,7 @@ impl Table {
     /// Sets the current table selection clearing any previous selection.
     ///
     /// Selecting more rows than the selection mode allows for results in nothing happening.
-    pub fn set_selection(&mut self, _ctx: &UI, selection: &Vec<i32>) {
+    pub fn set_selection(&mut self, selection: &Vec<i32>) {
         unsafe {
             // Our vector is only read, despite what struct and func signature say
             let mut s = ui_sys::uiTableSelection {
@@ -592,7 +587,7 @@ impl Table {
     ///
     /// Note: The callback is not triggered when calling `set_selection()` or when
     /// the selection is cleared due to `set_selection_mode()`.
-    pub fn on_selection_changed<'ctx, F>(&mut self, _ctx: &'ctx UI, callback: F)
+    pub fn on_selection_changed<'ctx, F>(&mut self, callback: F)
     where
         F: FnMut(&mut Table) + 'static,
     {
@@ -630,7 +625,7 @@ impl Table {
     /// Registers a callback for when the user single clicks a table row.
     ///
     /// Note: Only one callback can be registered at a time.
-    pub fn on_row_clicked<'ctx, F>(&mut self, _ctx: &'ctx UI, callback: F)
+    pub fn on_row_clicked<'ctx, F>(&mut self, callback: F)
     where
         F: FnMut(&mut Table, i32) + 'static,
     {
@@ -649,7 +644,7 @@ impl Table {
     /// Bug: The double click callback is always preceded by one `on_row_clicked()` callback.
     /// For unix systems linking against `GTK < 3.14` the preceding `on_row_clicked()` callback
     /// will be triggered twice.
-    pub fn on_row_double_clicked<'ctx, F>(&mut self, _ctx: &'ctx UI, callback: F)
+    pub fn on_row_double_clicked<'ctx, F>(&mut self, callback: F)
     where
         F: FnMut(&mut Table, i32) + 'static,
     {
@@ -665,7 +660,7 @@ impl Table {
     /// Registers a callback for when a table column header is clicked.
     ///
     /// Note: Only one callback can be registered at a time.
-    pub fn on_header_clicked<'ctx, F>(&mut self, _ctx: &'ctx UI, callback: F)
+    pub fn on_header_clicked<'ctx, F>(&mut self, callback: F)
     where
         F: FnMut(&mut Table, i32) + 'static,
     {
