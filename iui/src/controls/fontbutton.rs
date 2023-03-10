@@ -7,6 +7,7 @@ use std::{convert::TryFrom, mem};
 use ui::UI;
 use ui_sys::{self, uiControl, uiFontButton, uiFontDescriptor};
 
+/// An enum listing font styles.
 #[derive(Copy, Clone, Debug)]
 pub enum SlantStyle {
     Normal,
@@ -27,6 +28,7 @@ impl TryFrom<u32> for SlantStyle {
     }
 }
 
+/// An enum listing font stretch levels.
 #[derive(Copy, Clone, Debug)]
 pub enum StretchStyle {
     UltraCondensed,
@@ -59,6 +61,7 @@ impl TryFrom<u32> for StretchStyle {
     }
 }
 
+/// A structure describing a font by it properties.
 #[derive(Debug, Clone)]
 pub struct FontDescription {
     pub family: String,

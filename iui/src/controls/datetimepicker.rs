@@ -11,6 +11,7 @@ define_control! {
     sys_type: uiDateTimePicker
 }
 
+/// The possible selections the `DateTimePicker` shall offer.
 pub enum DateTimePickerKind {
     DateTime,
     Date,

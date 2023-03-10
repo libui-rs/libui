@@ -10,6 +10,7 @@ use ui_sys::{
     uiTableValueType,
 };
 
+/// An enum of possible `Table` cell/column types.
 #[derive(Copy, Clone, Debug)]
 pub enum TableValueType {
     String,
@@ -172,6 +173,7 @@ impl RustTableModelHandler {
     }
 }
 
+/// The view model for a `Table` control.
 pub struct TableModel {
     ui_table_model: *mut ui_sys::uiTableModel,
     _model_handler: Box<RustTableModelHandler>,
@@ -228,6 +230,7 @@ impl Drop for TableModel {
     }
 }
 
+/// The parameters to construct a `Table` with.
 pub struct TableParameters {
     model: Rc<RefCell<TableModel>>,
     row_background_color_column: i32,
@@ -242,6 +245,7 @@ impl TableParameters {
     }
 }
 
+/// Describes a visual sorting indicator for `Table` columns.
 #[derive(Copy, Clone, Debug)]
 pub enum SortIndicator {
     None,
@@ -249,6 +253,7 @@ pub enum SortIndicator {
     Descending,
 }
 
+/// Describes how many `Table` rows can be selected.
 #[derive(Copy, Clone, Debug)]
 pub enum SelectionMode {
     None,
@@ -257,6 +262,7 @@ pub enum SelectionMode {
     ZeroOrMany,
 }
 
+/// A structure holding additional information on text columns.
 #[derive(Copy, Clone, Debug)]
 pub struct TextColumnParameters {
     pub text_color_column: i32,
