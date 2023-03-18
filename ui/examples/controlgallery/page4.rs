@@ -1,10 +1,9 @@
-extern crate iui;
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::vec;
 
-use iui::controls::*;
-use iui::prelude::*;
+use ui::controls::*;
+use ui::prelude::*;
 
 struct MyDataSource {
     data: Vec<(i32, String, i32, i32, i32, String)>,
@@ -61,9 +60,7 @@ impl TableDataSource for MyDataSource {
         }
     }
 
-    fn set_cell(&mut self, _column: i32, _row: i32, _value: TableValue) {
-        todo!()
-    }
+    fn set_cell(&mut self, _column: i32, _row: i32, _value: TableValue) {}
 }
 
 pub fn make_table_page(_ui: UI) -> Control {

@@ -1,10 +1,12 @@
-extern crate iui;
-use iui::controls::{Button, Group, Label, VerticalBox, Form};
-use iui::prelude::*;
+extern crate ui;
+
+use ui::controls::{Button, Group, Label, VerticalBox, Form};
+use ui::prelude::*;
 
 fn main() {
     // Initialize the UI library
     let ui = UI::init().expect("Couldn't initialize UI library");
+
     // Create a window into which controls can be placed
     let mut win = Window::new(&ui.clone(), "Test App", 200, 200, WindowType::NoMenubar);
 

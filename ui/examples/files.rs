@@ -1,9 +1,9 @@
 //! Demonstrates the use of the Window::save_file() call to get a filename via a friendly GUI,
 //! and the Window::modal_err() call to display modal dialog boxes.
 
-extern crate iui;
-use iui::controls::{Button, MultilineEntry, VerticalBox};
-use iui::prelude::*;
+extern crate ui;
+use ui::controls::{Button, MultilineEntry, VerticalBox};
+use ui::prelude::*;
 use std::fs::File;
 use std::io::prelude::*;
 

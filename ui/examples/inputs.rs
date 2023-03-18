@@ -1,11 +1,11 @@
 //! Demonstrates a mutable application state manipulated over a number of UIs
 
-extern crate iui;
-use iui::controls::{
+extern crate ui;
+use ui::controls::{
     Entry, Group, HorizontalBox, HorizontalSeparator, Label, MultilineEntry, PasswordEntry,
     ProgressBar, Slider, Spacer, Spinbox, VerticalBox,
 };
-use iui::prelude::*;
+use ui::prelude::*;
 use std::cell::RefCell;
 use std::rc::Rc;
 

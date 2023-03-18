@@ -68,7 +68,7 @@ macro_rules! define_control {
                 unsafe { ui_sys::uiControlDisable(control.ui_control) }
             }
 
-            /// Create an `iui` struct for this control from the raw pointer for it.
+            /// Create an `ui` struct for this control from the raw pointer for it.
             ///
             /// # Unsafety
             /// The given pointer must point to a valid control or memory unsafety may result.

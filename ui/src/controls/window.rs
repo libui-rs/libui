@@ -14,7 +14,7 @@ thread_local! {
     static WINDOWS: RefCell<Vec<Window>> = RefCell::new(Vec::new())
 }
 
-/// A `Window` can either have a menubar or not; this enum represents that decision.\
+/// A `Window` can either have a menubar or not; this enum represents that decision.
 #[derive(Clone, Copy, Debug)]
 pub enum WindowType {
     HasMenubar,

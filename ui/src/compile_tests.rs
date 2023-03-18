@@ -3,7 +3,7 @@
 //! Here, we attempt to use-after-free some callbacks.
 //!
 //! ```compile_fail
-//! let ui = iui::UI::init().unwrap();
+//! let ui = ui::UI::init().unwrap();
 //!
 //! {
 //!     let v = vec![1, 2, 3, 4];
@@ -17,7 +17,7 @@
 //!
 //! This one is OK, because it moves the `Vec` into the closure's scope.
 //! ```no_run
-//! let ev = iui::UI::init().unwrap();
+//! let ev = ui::UI::init().unwrap();
 //!
 //! let v = vec![1, 2, 3, 4];
 //! ev.on_should_quit(move || {
@@ -32,8 +32,8 @@
 //!
 //! This one tries to use a reference to a string that is dropped out of scope.
 //! ```compile_fail
-//! # use iui::prelude::*;
-//! # use iui::controls::{Button};
+//! # use ui::prelude::*;
+//! # use ui::controls::{Button};
 //! let ui = UI::init().unwrap();
 //! let mut win = Window::new(&ui, "Test App", 200, 200, WindowType::NoMenubar);
 //! let mut button = Button::new("Button");
@@ -50,8 +50,8 @@
 //! Here we try to use-after-free data in the on-tick callback.
 //!
 //! ```compile_fail
-//! # use iui::prelude::*;
-//! # use iui::controls::{Button};
+//! # use ui::prelude::*;
+//! # use ui::controls::{Button};
 //! let ui = UI::init().unwrap();
 //! let mut ev = ui.event_loop();
 //! let win = Window::new(&ui, "Test App", 200, 200, WindowType::NoMenubar);

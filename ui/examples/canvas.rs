@@ -1,9 +1,9 @@
-extern crate iui;
+extern crate ui;
 extern crate ui_sys;
 
-use iui::controls::{Area, AreaDrawParams, AreaHandler, HorizontalBox, LayoutStrategy};
-use iui::draw::{Brush, FillMode, Path, SolidBrush};
-use iui::prelude::*;
+use ui::controls::{Area, AreaDrawParams, AreaHandler, HorizontalBox, LayoutStrategy};
+use ui::draw::{Brush, FillMode, Path, SolidBrush};
+use ui::prelude::*;
 use std::f64::consts::PI;
 
 struct HandleCanvas {}

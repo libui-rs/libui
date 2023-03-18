@@ -1,6 +1,5 @@
-extern crate iui;
-use iui::controls::*;
-use iui::prelude::*;
+use ui::controls::*;
+use ui::prelude::*;
 
 pub fn make_basic_page(_ui: UI) -> Control {
     let mut vbox = VerticalBox::new();

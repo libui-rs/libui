@@ -1,17 +1,14 @@
 [package]
-name = "iui"
-version = "0.3.0"
-authors = ["Leonora Tindall <lfstindall@gmail.com>"]
-
-# A short blurb about the package. This is not rendered in any format when
-# uploaded to crates.io (aka this is not markdown).
-description = "Simple, small, easy to distribute GUI bindings."
+name = "libui"
+version = "0.1.0"
+authors = ["Jakob K <jjk@outlook.at>"]
+description = "A native, cross-platform and lightweight UI toolkit."
 
 # These URLs point to more information about the package. These are
 # intended to be webviews of the relevant data, not necessarily compatible
 # with VCS tools and the like.
-documentation = "https://docs.rs/iui/"
-repository = "https://github.com/rust-native-ui/libui-rs"
+documentation = "https://docs.rs/libui/"
+repository = "https://github.com/libui-rs/libui"
 
 # This points to a file under the package root (relative to this `Cargo.toml`).
 # The contents of this file are stored and indexed in the registry.
@@ -29,13 +26,12 @@ keywords = ["windows", "gtk", "gui", "user_interface", "macos"]
 categories = ["gui", "os::macos-apis", "os::unix-apis", "os::windows-apis"]
 license = "MIT"
 
-[badges]
-travis-ci = { repository = "rust-native-ui/libui-rs", branch = "trunk" }
-appveyor = { repository = "rust-native-ui/libui-rs", branch = "trunk" }
-
 maintenance = { status = "actively-developed" }
+
+[lib]
+name="ui"
 
 [dependencies]
 bitflags = "1"
 libc = "0.2"
-ui-sys = { path = "../ui-sys", version = "0.2.1" }
+libui_bindings = { path = "../ui-sys", version = "0.1.0" }

@@ -3,9 +3,9 @@ mod page2;
 mod page3;
 mod page4;
 
-extern crate iui;
-use iui::controls::*;
-use iui::prelude::*;
+extern crate ui;
+use ui::controls::*;
+use ui::prelude::*;
 use std::cell::RefCell;
 use std::rc::Rc;
 

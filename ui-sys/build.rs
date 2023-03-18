@@ -10,7 +10,7 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 fn main() {
-    // Deterimine build platform
+    // Determine build platform
     let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
     let target_triple = env::var("TARGET").unwrap();
     let msvc = target_triple.contains("msvc");

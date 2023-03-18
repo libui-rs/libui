@@ -16,11 +16,11 @@ use ui_sys::{self, uiControl, uiProgressBar};
 /// take a type that is generic over this behavior, so it's easy to set the progress of a bar.
 ///
 /// ```
-/// # use iui::prelude::*;
-/// # use iui::controls::{ProgressBar, ProgressBarValue};
+/// # use ui::prelude::*;
+/// # use ui::controls::{ProgressBar, ProgressBarValue};
 /// # let ui = UI::init().unwrap();
 /// # if cfg!(target_os = "macos") { return; }
-/// # let mut window = Window::new("Test Window", 0, 0, WindowType::NoMenubar);
+/// # let mut window = Window::new(&ui, "Test Window", 0, 0, WindowType::NoMenubar);
 /// let mut progressbar = ProgressBar::indeterminate();
 /// progressbar.set_value(54);
 ///

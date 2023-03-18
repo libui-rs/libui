@@ -51,7 +51,7 @@ impl UI {
     /// have problems on Mac OS.
     ///
     /// ```
-    /// # use iui::UI;
+    /// # use ui::UI;
     /// {
     ///     let ui1 = UI::init().unwrap();
     ///
@@ -126,7 +126,7 @@ impl UI {
     /// # Example
     ///
     /// ```
-    /// use iui::prelude::*;
+    /// use ui::prelude::*;
     ///
     /// let ui = UI::init().unwrap();
     ///

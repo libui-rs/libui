@@ -1,6 +1,5 @@
-extern crate iui;
-use iui::controls::*;
-use iui::prelude::*;
+use ui::controls::*;
+use ui::prelude::*;
 use std::cell::RefCell;
 use std::rc::Rc;
 
