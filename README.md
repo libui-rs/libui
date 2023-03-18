@@ -21,9 +21,9 @@ Next we suggest to have a look at the [example applications](https://github.com/
 #![cfg_attr(not(test), windows_subsystem = "windows")]
 #![cfg_attr(test, windows_subsystem = "console")]
 
-extern crate ui;
-use ui::controls::*;
-use ui::prelude::*;
+extern crate libui;
+use libui::controls::*;
+use libui::prelude::*;
 
 fn main() {
     let ui = UI::init()

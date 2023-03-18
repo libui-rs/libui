@@ -19,7 +19,7 @@ fn on_whatever<'ctx, F: FnMut(&Whatever) + 'static>(&mut self, _ctx: &'ctx UI, c
 
     fn c_callback<G: FnMut(&Whatever)> { /* ... do stuff ... */ }
 
-    ui_sys::uiWhateverOnWhatever(/* ... */, c_callback::<F>);
+    libui_ffi::uiWhateverOnWhatever(/* ... */, c_callback::<F>);
 }
 ```
 

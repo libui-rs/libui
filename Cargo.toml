@@ -1,7 +1,6 @@
 [workspace]
 
 members = [
-    "ui",
-    "ui-sys",
+    "libui",
+    "libui-ffi",
 ]
-
