@@ -1,14 +1,14 @@
 use super::Control;
 use callback_helpers::{from_void_ptr, to_heap_ptr};
+use libui_ffi::{
+    self, uiControl, uiSortIndicator, uiTable, uiTableModel, uiTableModelHandler, uiTableParams,
+    uiTableSelectionMode, uiTableValue, uiTableValueType,
+};
 use std::cell::RefCell;
 use std::ffi::{CStr, CString};
 use std::mem;
-use std::os::raw::{c_int, c_void};
+use std::os::raw::{c_int, c_uint, c_void};
 use std::rc::Rc;
-use libui_ffi::{
-    self, uiControl, uiTable, uiTableModel, uiTableModelHandler, uiTableParams, uiTableValue,
-    uiTableValueType,
-};
 
 /// An enum of possible `Table` cell/column types.
 #[derive(Copy, Clone, Debug)]
@@ -17,6 +17,39 @@ pub enum TableValueType {
     Image,
     Int,
     Color,
+}
+
+// libui intends its enums to be u32 but is unable to express that
+// in C with the `enum` statement. Bindgen then has to guess.
+// On some platforms it emits u32, on some i32, triggering
+// compile errors. Since there is no option for this in bindgen,
+// we have to work around this here. Related bindgen questions:
+// https://github.com/rust-lang/rust-bindgen/issues/1361
+// https://github.com/rust-lang/rust-bindgen/issues/1907
+impl TableValueType {
+    fn from_ui(t: uiTableValueType) -> TableValueType {
+        const X_STRING: c_uint = libui_ffi::uiTableValueTypeString as c_uint;
+        const X_IMAGE: c_uint = libui_ffi::uiTableValueTypeImage as c_uint;
+        const X_INT: c_uint = libui_ffi::uiTableValueTypeInt as c_uint;
+        const X_COLOR: c_uint = libui_ffi::uiTableValueTypeColor as c_uint;
+        match t {
+            X_STRING => TableValueType::String,
+            X_IMAGE => TableValueType::Image,
+            X_INT => TableValueType::Int,
+            X_COLOR => TableValueType::Color,
+            _ => panic!("Unsupported table value type"),
+        }
+    }
+
+    fn into_ui(self) -> uiTableValueType {
+        use self::TableValueType::*;
+        return match self {
+            String => libui_ffi::uiTableValueTypeString,
+            Image => libui_ffi::uiTableValueTypeImage,
+            Int => libui_ffi::uiTableValueTypeInt,
+            Color => libui_ffi::uiTableValueTypeColor,
+        } as uiTableValueType;
+    }
 }
 
 /// An enum representing the value of a `Table` cell.
@@ -75,12 +108,7 @@ extern "C" fn c_column_type(
             .column_type(column)
     };
 
-    match t {
-        TableValueType::String => libui_ffi::uiTableValueTypeString,
-        TableValueType::Image => libui_ffi::uiTableValueTypeImage,
-        TableValueType::Int => libui_ffi::uiTableValueTypeInt,
-        TableValueType::Color => libui_ffi::uiTableValueTypeColor,
-    }
+    t.into_ui()
 }
 
 extern "C" fn c_cell_value(
@@ -127,17 +155,18 @@ extern "C" fn c_set_cell_value(
         }
 
         let vt = libui_ffi::uiTableValueGetType(value);
+        let rt = TableValueType::from_ui(vt);
 
-        let rust_value = match vt {
-            libui_ffi::uiTableValueTypeInt => {
+        let rust_value = match rt {
+            TableValueType::Int => {
                 let i = libui_ffi::uiTableValueInt(value);
                 TableValue::Int(i)
             }
-            libui_ffi::uiTableValueTypeString => {
+            TableValueType::String => {
                 let s = libui_ffi::uiTableValueString(value);
                 TableValue::String(CStr::from_ptr(s).to_string_lossy().into_owned())
             }
-            libui_ffi::uiTableValueTypeColor => {
+            TableValueType::Color => {
                 let (mut r, mut g, mut b, mut a) = (0.0, 0.0, 0.0, 0.0);
                 libui_ffi::uiTableValueColor(value, &mut r, &mut g, &mut b, &mut a);
                 TableValue::Color { r, g, b, a }
@@ -185,7 +214,9 @@ impl TableModel {
             let mut handler = Box::new(RustTableModelHandler::new(data_source));
             let ptr = handler.as_mut() as *mut RustTableModelHandler;
             TableModel {
-                ui_table_model: libui_ffi::uiNewTableModel(ptr as *mut libui_ffi::uiTableModelHandler),
+                ui_table_model: libui_ffi::uiNewTableModel(
+                    ptr as *mut libui_ffi::uiTableModelHandler,
+                ),
                 _model_handler: handler, // We store the object to bind its lifetime to ours.
             }
         }
@@ -253,6 +284,30 @@ pub enum SortIndicator {
     Descending,
 }
 
+impl SortIndicator {
+    fn from_ui(t: uiSortIndicator) -> SortIndicator {
+        // bindgen workaround: enum type
+        const X_NONE: c_uint = libui_ffi::uiSortIndicatorNone as c_uint;
+        const X_ASC: c_uint = libui_ffi::uiSortIndicatorAscending as c_uint;
+        const X_DESC: c_uint = libui_ffi::uiSortIndicatorDescending as c_uint;
+        match t {
+            X_NONE => SortIndicator::None,
+            X_ASC => SortIndicator::Ascending,
+            X_DESC => SortIndicator::Descending,
+            _ => panic!("Unsupported sort indicator"),
+        }
+    }
+
+    fn into_ui(self) -> uiSortIndicator {
+        use self::SortIndicator::*;
+        return match self {
+            None => libui_ffi::uiSortIndicatorNone,
+            Ascending => libui_ffi::uiSortIndicatorAscending,
+            Descending => libui_ffi::uiSortIndicatorDescending,
+        } as uiSortIndicator;
+    }
+}
+
 /// Describes how many `Table` rows can be selected.
 #[derive(Copy, Clone, Debug)]
 pub enum SelectionMode {
@@ -260,6 +315,33 @@ pub enum SelectionMode {
     ZeroOrOne,
     One,
     ZeroOrMany,
+}
+
+impl SelectionMode {
+    fn from_ui(t: uiTableSelectionMode) -> SelectionMode {
+        // bindgen workaround: enum type
+        const X_NONE: c_uint = libui_ffi::uiTableSelectionModeNone as c_uint;
+        const X_MAX_ONE: c_uint = libui_ffi::uiTableSelectionModeZeroOrOne as c_uint;
+        const X_ONE: c_uint = libui_ffi::uiTableSelectionModeOne as c_uint;
+        const X_MIN_ONE: c_uint = libui_ffi::uiTableSelectionModeZeroOrMany as c_uint;
+        match t {
+            X_NONE => SelectionMode::None,
+            X_MAX_ONE => SelectionMode::ZeroOrOne,
+            X_ONE => SelectionMode::One,
+            X_MIN_ONE => SelectionMode::ZeroOrMany,
+            _ => panic!("Unsupported selection mode"),
+        }
+    }
+
+    fn into_ui(self) -> uiTableSelectionMode {
+        use self::SelectionMode::*;
+        return match self {
+            None => libui_ffi::uiTableSelectionModeNone,
+            ZeroOrOne => libui_ffi::uiTableSelectionModeZeroOrOne,
+            One => libui_ffi::uiTableSelectionModeOne,
+            ZeroOrMany => libui_ffi::uiTableSelectionModeZeroOrMany,
+        } as uiTableSelectionMode;
+    }
 }
 
 /// A structure holding additional information on text columns.
@@ -492,12 +574,7 @@ impl Table {
     /// Returns the column's sort indicator displayed in the table header.
     pub fn sort_indicator(&self, column: i32) -> SortIndicator {
         let v = unsafe { libui_ffi::uiTableHeaderSortIndicator(self.uiTable, column) };
-        match v {
-            libui_ffi::uiSortIndicatorNone => SortIndicator::None,
-            libui_ffi::uiSortIndicatorAscending => SortIndicator::Ascending,
-            libui_ffi::uiSortIndicatorDescending => SortIndicator::Descending,
-            _ => panic!("Invalid sort indicator value"),
-        }
+        SortIndicator::from_ui(v)
     }
 
     /// Sets the column's sort indicator displayed in the table header.
@@ -505,13 +582,8 @@ impl Table {
     /// Use this to display appropriate arrows in the table header to indicate a sort direction.
     /// Setting the indicator is purely visual and does not perform any sorting.
     pub fn set_sort_indicator(&mut self, column: i32, indicator: SortIndicator) {
-        let v = match indicator {
-            SortIndicator::None => libui_ffi::uiSortIndicatorNone,
-            SortIndicator::Ascending => libui_ffi::uiSortIndicatorAscending,
-            SortIndicator::Descending => libui_ffi::uiSortIndicatorDescending,
-        };
         unsafe {
-            libui_ffi::uiTableHeaderSetSortIndicator(self.uiTable, column, v);
+            libui_ffi::uiTableHeaderSetSortIndicator(self.uiTable, column, indicator.into_ui());
         }
     }
 
@@ -534,33 +606,22 @@ impl Table {
     /// Returns the table selection mode.
     pub fn selection_mode(&self) -> SelectionMode {
         let v = unsafe { libui_ffi::uiTableGetSelectionMode(self.uiTable) };
-        match v {
-            libui_ffi::uiTableSelectionModeNone => SelectionMode::None,
-            libui_ffi::uiTableSelectionModeZeroOrOne => SelectionMode::ZeroOrOne,
-            libui_ffi::uiTableSelectionModeOne => SelectionMode::One,
-            libui_ffi::uiTableSelectionModeZeroOrMany => SelectionMode::ZeroOrMany,
-            _ => panic!("Invalid selection mode value"),
-        }
+        SelectionMode::from_ui(v)
     }
 
     /// Sets the table selection mode.
     ///
     /// Note: All rows will be deselected if the existing selection is illegal in the new selection mode.
     pub fn set_selection_mode(&mut self, mode: SelectionMode) {
-        let v = match mode {
-            SelectionMode::None => libui_ffi::uiTableSelectionModeNone,
-            SelectionMode::ZeroOrOne => libui_ffi::uiTableSelectionModeZeroOrOne,
-            SelectionMode::One => libui_ffi::uiTableSelectionModeOne,
-            SelectionMode::ZeroOrMany => libui_ffi::uiTableSelectionModeZeroOrMany,
-        };
         unsafe {
-            libui_ffi::uiTableSetSelectionMode(self.uiTable, v);
+            libui_ffi::uiTableSetSelectionMode(self.uiTable, mode.into_ui());
         }
     }
 
     /// Returns the current table selection.
     ///
     /// If nothing is selected, the vector will be empty.
+    /// Warning: This function leaks memory currently.
     pub fn selection(&self) -> Vec<i32> {
         let mut selection: Vec<i32> = vec![];
         unsafe {
@@ -570,7 +631,8 @@ impl Table {
                 let v = *(p.offset(i as isize));
                 selection.push(v);
             }
-            libui_ffi::uiFreeTableSelection(s);
+            // Linker error under Windows...
+            // libui_ffi::uiFreeTableSelection(s);
         }
         selection
     }
@@ -585,7 +647,10 @@ impl Table {
                 NumRows: selection.len() as i32,
                 Rows: selection.as_ptr() as *mut i32,
             };
-            libui_ffi::uiTableSetSelection(self.uiTable, &mut s as *mut libui_ffi::uiTableSelection);
+            libui_ffi::uiTableSetSelection(
+                self.uiTable,
+                &mut s as *mut libui_ffi::uiTableSelection,
+            );
         }
     }
 

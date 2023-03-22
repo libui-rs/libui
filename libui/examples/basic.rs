@@ -1,6 +1,6 @@
 extern crate libui;
 
-use libui::controls::{Button, Group, Label, VerticalBox, Form};
+use libui::controls::{Button, Group, Label, VerticalBox};
 use libui::prelude::*;
 
 fn main() {
@@ -26,11 +26,6 @@ fn main() {
     });
 
     let mut quit_button = Button::new("Quit");
-
-
-    let mut form = Form::new();
-    form.set_padded(true);
-    form.append("btn", quit_button.clone(), LayoutStrategy::Compact);
     quit_button.on_clicked({
         let ui = ui.clone();
         move |_| {
@@ -46,7 +41,7 @@ fn main() {
 
     vbox.append(label, LayoutStrategy::Stretchy);
     group_vbox.append(button, LayoutStrategy::Compact);
-    group_vbox.append(form, LayoutStrategy::Compact);
+    group_vbox.append(quit_button, LayoutStrategy::Compact);
     group.set_child(group_vbox);
     vbox.append(group, LayoutStrategy::Compact);
 

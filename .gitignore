@@ -1,5 +1,5 @@
 Cargo.lock
 *.swp
-ui/target
-ui-sys/target
+libui/target
+libui-ffi/target
 target

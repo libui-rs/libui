@@ -53,8 +53,7 @@ For more screenshots, look at the examples of [`libui-ng`](https://github.com/li
 
 ## Prerequisits & Building
 
-To build the underlying `libui-ng` your system must have certain tools installed in addition to your rust toolchain. 
-The build of `libui-ng` happens automatically, but the tools must be there. I am trying to cut down on the inconveniences as far as possible.
+To build the underlying `libui-ng` your system must have certain tools installed in addition to your rust toolchain. I am trying to cut down on the inconveniences as far as possible.
 
 __Linux:__
 * libgtk-3-dev (debian package) - for compiling `libui-ng`
@@ -64,10 +63,10 @@ __Windows:__
 * MSVC (via Windows SDK or Visual Studio)
 * LLVM - for generating the `libui-ng` bindings
 
-Note: MinGW-64 does compile and link, but the application won't start due to MinGW missing `TaskDialog()`.
+Note: MinGW-64 does compile and link, but the application won't start due to MinGW missing `TaskDialog()`. Reportedly, with versions >= 5.X, the function is available.
 
 ## Acknowledgments
 
-* Initial work by [@pcwalton](https://github.com/pcwalton/) who largely shaped this library.
-* Further development was done at [https://github.com/rust-native-ui/libui-rs](rust-native-ui/libui-rs) by various authors, most prominently [@NoraCodes](https://github.com/NoraCodes/).
-* This library is the continuation of the above, using `libui-ng` with its new features, rather than the original but now dormant same-named C library `libui`.
+* Initial work from [@pcwalton](https://github.com/pcwalton/), who largely shaped this library.
+* Further development was done at [rust-native-ui/libui-rs](https://github.com/rust-native-ui/libui-rs) by [@NoraCodes](https://github.com/NoraCodes/) and others.
+* This library is the continuation of the above, but using `libui-ng` with its new features instead the original, now abandoned, same-named C library `libui`.

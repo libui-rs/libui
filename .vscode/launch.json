@@ -1,7 +1,7 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
+	"version": "0.2.0",
+	"configurations": [
+		{
 			"name": "(Linux) Debug Control Gallery",
 			"type": "lldb",
 			"request": "launch",
@@ -13,5 +13,5 @@
 			"console": "integratedTerminal",
 			"preLaunchTask": "cargo build examples"
 		}
-    ]
+	]
 }

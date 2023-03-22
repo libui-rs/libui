@@ -1,9 +1,9 @@
 use super::Control;
 use callback_helpers::{from_void_ptr, to_heap_ptr};
+use libui_ffi::{self, uiControl, uiDateTimePicker};
 use std::mem;
 use std::os::raw::c_void;
 use ui::UI;
-use libui_ffi::{self, uiControl, uiDateTimePicker};
 
 define_control! {
     /// Allows to enter a date and/or time.
@@ -38,19 +38,10 @@ impl DateTimePicker {
     /// Warning: The `struct tm` member `tm_isdst` is unused on Windows and will be `-1`.
     pub fn datetime(&self) -> libc::tm {
         unsafe {
-            let mut datetime = libc::tm {
-                tm_sec: 0,
-                tm_min: 0,
-                tm_hour: 0,
-                tm_mday: 0,
-                tm_mon: 0,
-                tm_year: 0,
-                tm_wday: 0,
-                tm_yday: 0,
-                tm_isdst: 0,
-                tm_gmtoff: 0,
-                tm_zone: std::ptr::null(),
-            };
+            // `struct tm` varies depending on platform (tm_gmtoff, tm_zone). We thus can't
+            // init the fields ourselves but have to memset init.
+            let mut datetime = std::mem::MaybeUninit::<libc::tm>::zeroed().assume_init();
+
             let ptr = &mut datetime as *mut libc::tm;
             libui_ffi::uiDateTimePickerTime(self.uiDateTimePicker, ptr as *mut libui_ffi::tm);
             datetime

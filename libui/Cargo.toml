@@ -26,8 +26,6 @@ keywords = ["windows", "gtk", "gui", "user_interface", "macos"]
 categories = ["gui", "os::macos-apis", "os::unix-apis", "os::windows-apis"]
 license = "MIT"
 
-maintenance = { status = "actively-developed" }
-
 [dependencies]
 bitflags = "1"
 libc = "0.2"
