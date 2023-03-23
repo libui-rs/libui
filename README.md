@@ -49,7 +49,7 @@ On the left see a `libui` application running on a GNOME desktop with GTK 3. On 
 
 ![Example application running under Linux and Windows](images/libui_gtk_win.png)
 
-For more screenshots, look at the examples of [`libui-ng`](https://github.com/libui-ng/libui-ng).
+For more screenshots, see [`here`](https://github.com/nptr/libui-rs/tree/development/images).
 
 ## Prerequisits & Building
 

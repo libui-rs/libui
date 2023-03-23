@@ -58,9 +58,16 @@ pub fn make_numbers_page(_ui: UI) -> Control {
     radiobuttons.append("Radio Button 2");
     radiobuttons.append("Radio Button 3");
 
+    let dummybox = VerticalBox::new();
     vbox_lists.append(combobox, LayoutStrategy::Compact);
     vbox_lists.append(combobox_editable, LayoutStrategy::Compact);
     vbox_lists.append(radiobuttons, LayoutStrategy::Compact);
+    
+    // On MacOS, the last item in a list tends to take all the remaining space,
+    // regardless of our `LayoutStrategy`. Because we don't want the radio buttons
+    // to be all over the place, a dummy box is inserted to take the space instead
+    // without visually affecting the UI.
+    vbox_lists.append(dummybox, LayoutStrategy::Compact);
 
     group_lists.set_child(vbox_lists);
     hbox.append(group_lists.clone(), LayoutStrategy::Stretchy);

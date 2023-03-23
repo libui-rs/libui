@@ -209,7 +209,7 @@ pub fn make_data_page(_ui: UI, window: Rc<RefCell<Window>>) -> Control {
         1,
         GridExpand::Vertical,
         GridAlignment::Fill,
-        GridAlignment::Fill,
+        GridAlignment::Start, // Avoids inconsistencies on OSX
     );
 
     let mut vbox2 = VerticalBox::new();

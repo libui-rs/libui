@@ -239,6 +239,20 @@ fn main() {
         } else if apple {
             base_config.include(src_path("/darwin"));
 
+            // https://github.com/sbmpost/AutoRaise/issues/69
+            // https://youtrack.jetbrains.com/issue/KT-48807
+            // "In Xcode 13 RC localizedAttributedStringForKey:value:table: method got NS_FORMAT_ARGUMENT(1) macro attribute. 
+            // Previously, this attribute was applicable only to functions that return a C string, CFString or NSString. 
+            // Recently, Apple added support in Clang for another type, NSAttributedString. Clang that ships with Kotlin/Native
+            // does not have this patch and fails to process localizedAttributedStringForKey:value:table: declaration.
+            // What this workaround does is it makes NS_FORMAT_ARGUMENT(1) a no-op."
+            base_config.flag("-DNS_FORMAT_ARGUMENT(A)=");
+
+            // libui-ng uses this flag. I found it to cause a linker error on MaCOS 11.6.
+            // Undefined symbol "___isPlatformVersionAtLeast", caused by the @available attribute when mixing XCode/CLTools versions.
+            // I'll leave it here in case its different for someone.
+            //base_config.flag("-mmacosx-version-min=10.8");
+            
             for filename in [
                 "darwin/aat.m",
                 "darwin/alloc.m",
