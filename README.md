@@ -3,7 +3,8 @@
 
 ## The native cross-platform UI toolkit for Rust
 
-`libui` is a **simple**, **small** and **easy to distribute** GUI library. It provides a native UI for your platform by utilising your systems API instead of implementing yet another mismatched looking renderer. Thus all `libui` apps are lightweight, have a native look and feel and start from a highly performant base which is well integrated with the ecosystem on each platform. Because it implements only the common subset of these platform APIs, your apps will work on all platforms and won't have significant behavioral inconsistencies, with no additional effort on your part.
+`libui` is a **simple**, **small** and **easy to distribute** GUI library. It provides a native UI for your platform by utilising your systems API instead of implementing yet another mismatched looking renderer. Thus all `libui` apps are lightweight, have a native look and feel and start from a highly performant base which is well integrated with the ecosystem on each platform. Because it implements only the common subset of these platform APIs, your apps will work on all platforms and won't have significant behavioral inconsistencies, with no additional effort on your part. If you only plan to support one platform however, a specialized crate will
+provide a better experience.
 
 Technically, `libui` is a "rustification" wrapper over the C library [`libui-ng`](https://github.com/libui-ng/libui-ng), which actually abstracts the native GUI framework. That is the Win32 API on Windows, Cocoa on Mac OS X, and GTK3 for Linux and others. 
 
@@ -15,7 +16,7 @@ Add `libui` to your dependency list in `cargo.toml` with:
 libui = { git = "https://github.com/libui-rs/libui" }
 ```
 
-Next we suggest to have a look at the [example applications](https://github.com/libui-rs/libui/ui/examples) or start with the minimal example printed here:
+Next we suggest to have a look at the [example applications](https://github.com/libui-rs/libui/tree/development/libui/examples) or start with the minimal example printed here:
 
 ```rust
 #![cfg_attr(not(test), windows_subsystem = "windows")]
@@ -49,7 +50,7 @@ On the left see a `libui` application running on a GNOME desktop with GTK 3. On 
 
 ![Example application running under Linux and Windows](images/libui_gtk_win.png)
 
-For more screenshots, see [`here`](https://github.com/nptr/libui-rs/tree/development/images).
+For more screenshots, see [`here`](https://github.com/libui-rs/libui/tree/development/images).
 
 ## Prerequisits & Building
 
