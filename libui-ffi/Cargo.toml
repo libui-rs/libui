@@ -1,5 +1,5 @@
 [package]
-name = "libui_ffi"
+name = "libui-ffi"
 version = "0.1.0"
 authors = ["Jakob K <jjk@outlook.at>"]
 license = "MIT"
@@ -8,8 +8,8 @@ description = "Easy to build low-level bindings to 'libui-ng'"
 # These URLs point to more information about the package. These are
 # intended to be webviews of the relevant data, not necessarily compatible
 # with VCS tools and the like.
-documentation = "https://docs.rs/ui-sys/"
-repository = "https://github.com/rust-native-ui/libui-rs"
+documentation = "https://docs.rs/libui-ffi/"
+repository = "https://github.com/libui-rs/libui"
 
 # This is a list of up to five keywords that describe this crate. Keywords
 # are searchable on crates.io, and you may choose any words that would

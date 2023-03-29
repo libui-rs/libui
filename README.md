@@ -8,9 +8,15 @@ provide a better experience.
 
 Technically, `libui` is a "rustification" wrapper over the C library [`libui-ng`](https://github.com/libui-ng/libui-ng), which actually abstracts the native GUI framework. That is the Win32 API on Windows, Cocoa on Mac OS X, and GTK3 for Linux and others. 
 
-## Using
+## Example
 
 Add `libui` to your dependency list in `cargo.toml` with:
+
+```toml
+libui = "0.1.0"
+```
+
+or use the latest version from the repository:
 
 ```toml
 libui = { git = "https://github.com/libui-rs/libui" }
@@ -51,6 +57,14 @@ On the left see a `libui` application running on a GNOME desktop with GTK 3. On 
 ![Example application running under Linux and Windows](images/libui_gtk_win.png)
 
 For more screenshots, see [`here`](https://github.com/libui-rs/libui/tree/development/images).
+
+## Compatibility
+
+`libui` was successfully tested on:
+* Windows 7 SP1
+* Windows 10 22H2
+* Debian 12 w/ GNOME 43 & GTK 3.24
+* macOS Big Sur 11.6
 
 ## Prerequisits & Building
 
