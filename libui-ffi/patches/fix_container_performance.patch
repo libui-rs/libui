@@ -1,13 +1,60 @@
 diff --git a/windows/container.cpp b/windows/container.cpp
-index 9ec1e280..bc53cd7c 100644
+index 9ec1e280..dad53ba8 100644
 --- a/windows/container.cpp
 +++ b/windows/container.cpp
-@@ -50,26 +50,6 @@ static LRESULT CALLBACK containerWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LP
+@@ -14,6 +14,23 @@ struct containerInit {
+ 	void (*onResize)(uiWindowsControl *);
+ };
+ 
++static HWND parentWithBackground(HWND hwnd)
++{
++	HWND parent;
++	int cls;
++
++	parent = hwnd;
++	for (;;) {
++		parent = parentOf(parent);
++		// skip groupboxes; they're (supposed to be) transparent
++		// skip uiContainers; they don't draw anything
++		cls = windowClassOf(parent, L"button", containerClass, NULL);
++		if (cls != 0 && cls != 1)
++			break;
++	}
++	return parent;
++}
++
+ static LRESULT CALLBACK containerWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+ {
+ 	RECT r;
+@@ -27,6 +44,8 @@ static LRESULT CALLBACK containerWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LP
+ 	void (*onResize)(uiWindowsControl *);
+ 	int minwid, minht;
+ 	LRESULT lResult;
++	HWND hwndParent;
++	HBRUSH bgBrush;
+ 
+ 	if (handleParentMessages(hwnd, uMsg, wParam, lParam, &lResult) != FALSE)
+ 		return lResult;
+@@ -50,25 +69,44 @@ static LRESULT CALLBACK containerWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LP
  		mmi->ptMinTrackSize.x = minwid;
  		mmi->ptMinTrackSize.y = minht;
  		return lResult;
--	case WM_PAINT:
--		dc = BeginPaint(hwnd, &ps);
++
++	// GDI doesn't support transparency. The Win32 controls way to achieve a similar effect 
++	// is to ask the parent control for the appropriate background brush (WM_CTLCOLORSTATIC)
++	// or ask to the parent to render the background for it (WM_PRINTCLIENT).
++	//
++	// Our container control is supposed to be fully transparent. And containers can contain
++	// other containers. So we have to dynamically find the next control that is not a 
++	// container itself and retrieve its background brush so we can paint ourselves with it.
++	//
++	// NOTE: Doing "transparency" this way, only works for solid color backgrounds. Supporting
++	// gradients and more is super tricky. Fortunately Microsoft is using solid color backgrounds
++	// since Vista. Probably for this reason.
++	//
++	// Paint ourself with the background brush.
+ 	case WM_PAINT:
+ 		dc = BeginPaint(hwnd, &ps);
 -		if (dc == NULL) {
 -			logLastError(L"error beginning container paint");
 -			// bail out; hope DefWindowProc() catches us
@@ -16,19 +63,36 @@ index 9ec1e280..bc53cd7c 100644
 -		r = ps.rcPaint;
 -		paintContainerBackground(hwnd, dc, &r);
 -		EndPaint(hwnd, &ps);
--		return 0;
++		if(!dc) break;
++		hwndParent = parentWithBackground(hwnd);
++		bgBrush = (HBRUSH) SendMessage(hwndParent, WM_CTLCOLORSTATIC, (WPARAM) dc, (LPARAM) hwnd);
++		FillRect(dc, &ps.rcPaint, bgBrush);
++		EndPaint (hwnd, &ps);
+ 		return 0;
 -	// tab controls use this to draw the background of the tab area
--	case WM_PRINTCLIENT:
++	// Paint the backgrounds of our children if they ask for it.
+ 	case WM_PRINTCLIENT:
 -		uiWindowsEnsureGetClientRect(hwnd, &r);
 -		paintContainerBackground(hwnd, (HDC) wParam, &r);
--		return 0;
--	case WM_ERASEBKGND:
++		dc = (HDC)wParam;
++		GetClientRect(hwnd, &r);
++		hwndParent = parentWithBackground(hwnd);
++		bgBrush = (HBRUSH) SendMessage(hwndParent, WM_CTLCOLORSTATIC, (WPARAM) dc, (LPARAM) hwnd);
++		FillRect(dc, &r, bgBrush);
+ 		return 0;
++	// Relay the background brush inquiries from our children to our own parent.
++	case WM_CTLCOLORBTN:
++	case WM_CTLCOLORSTATIC:
++		hwndParent = parentWithBackground(hwnd);
++		bgBrush = (HBRUSH) SendMessage(hwndParent, WM_CTLCOLORSTATIC, wParam, lParam);
++		return (INT_PTR)bgBrush;
++	// Skip erasing because we paint the whole area anyways.
+ 	case WM_ERASEBKGND:
 -		// avoid some flicker
 -		// we draw the whole update area anyway
--		return 1;
+ 		return 1;
  	}
  	return DefWindowProcW(hwnd, uMsg, wParam, lParam);
- }
 diff --git a/windows/parent.cpp b/windows/parent.cpp
 index bde6fb94..e57e117b 100644
 --- a/windows/parent.cpp
@@ -174,6 +238,28 @@ index bde6fb94..e57e117b 100644
  	}
  	return FALSE;
  }
+diff --git a/windows/tabpage.cpp b/windows/tabpage.cpp
+index c2584019..259f6a14 100644
+--- a/windows/tabpage.cpp
++++ b/windows/tabpage.cpp
+@@ -64,17 +64,6 @@ static INT_PTR CALLBACK dlgproc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
+ 		return FALSE;
+ 	}
+ 
+-	// unthemed dialogs don't respond to WM_PRINTCLIENT
+-	// fortunately they don't have any special painting
+-	if (uMsg == WM_PRINTCLIENT) {
+-		// don't worry about the return value; hopefully DefWindowProcW() caught it (if not the dialog procedure itself)
+-		// we COULD paint the dialog background brush ourselves but meh, it works
+-		SendMessageW(hwnd, WM_ERASEBKGND, wParam, lParam);
+-		// and pretend we did nothing just so the themed dialog can still paint its content
+-		// TODO see if w ecan avoid erasing the background in this case in the first place, or if we even need to
+-		return FALSE;
+-	}
+-
+ 	return FALSE;
+ }
+ 
 diff --git a/windows/uipriv_windows.hpp b/windows/uipriv_windows.hpp
 index 192284f5..d3c1e413 100644
 --- a/windows/uipriv_windows.hpp
@@ -186,3 +272,19 @@ index 192284f5..d3c1e413 100644
  extern BOOL handleParentMessages(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT *lResult);
  
  // d2dscratch.cpp
+diff --git a/windows/window.cpp b/windows/window.cpp
+index 01771120..78672d7f 100644
+--- a/windows/window.cpp
++++ b/windows/window.cpp
+@@ -123,11 +123,6 @@ static LRESULT CALLBACK windowWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
+ 			w->focused = 1;
+ 		w->onFocusChanged(w, w->onFocusChangedData);
+ 		return 0;
+-	case WM_PRINTCLIENT:
+-		// we do no special painting; just erase the background
+-		// don't worry about the return value; we let DefWindowProcW() handle this message
+-		SendMessageW(hwnd, WM_ERASEBKGND, wParam, lParam);
+-		return 0;
+ 	case WM_CLOSE:
+ 		if ((*(w->onClosing))(w, w->onClosingData))
+ 			uiControlDestroy(uiControl(w));
