@@ -7,7 +7,7 @@
 //! libui = { git = "https://github.com/libui-rs/libui" }
 //! ```
 //! 
-//! Next we suggest to have a look at the [example applications](https://github.com/libui-rs/libui/ui/examples) or start with the minimal example printed here:
+//! Next we suggest to have a look at the [example applications](https://github.com/libui-rs/libui/tree/development/libui/examples) or start with the minimal example printed here:
 //! 
 //! ```no_run
 //! #![cfg_attr(not(test), windows_subsystem = "windows")]
