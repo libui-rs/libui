@@ -40,6 +40,7 @@ extern crate bitflags;
 extern crate libc;
 extern crate libui_ffi;
 
+mod builder;
 mod callback_helpers;
 mod compile_tests;
 pub mod controls;

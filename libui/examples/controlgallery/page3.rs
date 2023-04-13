@@ -38,11 +38,6 @@ pub fn make_data_page(_ui: UI, window: Rc<RefCell<Window>>) -> Control {
         }
     });
 
-    // TODO: DatePicker
-    // TODO: TimePicker
-    // TODO: DateTimePicker
-    // TODO: FontPicker
-    // TODO: ColorPicker
     // TODO: Vertical Separator
     vbox.append(bt_date, LayoutStrategy::Compact);
     vbox.append(bt_time, LayoutStrategy::Compact);

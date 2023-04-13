@@ -16,7 +16,7 @@ fn main() {
     let mut layout = HorizontalBox::new();
     let window = Rc::new(RefCell::new(Window::new(
         &ui,
-        "Test",
+        "Control Gallery",
         640,
         480,
         WindowType::NoMenubar,
@@ -38,10 +38,5 @@ fn main() {
     window.borrow_mut().set_child(layout);
     window.borrow_mut().show();
 
-    // Rather than just invoking ui.run(), using EventLoop gives a lot more control
-    // over the user interface event loop.
-    // Here, the on_tick() callback is used to update the view against the state.
-    let mut event_loop = ui.event_loop();
-    event_loop.on_tick(move || {});
-    event_loop.run();
+    ui.main();
 }

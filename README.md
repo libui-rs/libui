@@ -6,7 +6,7 @@
 `libui` is a **simple**, **small** and **easy to distribute** GUI library. It provides a native UI for your platform by utilising your systems API instead of implementing yet another mismatched looking renderer. Thus all `libui` apps are lightweight, have a native look and feel and start from a highly performant base which is well integrated with the ecosystem on each platform. Because it implements only the common subset of these platform APIs, your apps will work on all platforms and won't have significant behavioral inconsistencies, with no additional effort on your part. If you only plan to support one platform however, a specialized crate will
 provide a better experience.
 
-Technically, `libui` is a "rustification" wrapper over the C library [`libui-ng`](https://github.com/libui-ng/libui-ng), which actually abstracts the native GUI framework. That is the Win32 API on Windows, Cocoa on Mac OS X, and GTK3 for Linux and others. 
+Technically, `libui` is a "rustification" wrapper over the C library [`libui-ng`](https://github.com/libui-ng/libui-ng), which actually abstracts the native GUI framework. That is the Win32 API on Windows, Cocoa on Mac OS X, and GTK3 for Linux and others.
 
 ## Example
 
@@ -82,6 +82,10 @@ Note: MinGW-64 does compile and link, but the application won't start due to Min
 
 ## Acknowledgments
 
-* Initial work from [@pcwalton](https://github.com/pcwalton/), who largely shaped this library.
-* Further development was done at [rust-native-ui/libui-rs](https://github.com/rust-native-ui/libui-rs) by [@NoraCodes](https://github.com/NoraCodes/) and others.
-* This library is the continuation of the above, but using `libui-ng` with its new features instead the original, now abandoned, same-named C library `libui`.
+| Entity                                                                          | Acknowledgement                                                    | Further Information                                                   |
+|---------------------------------------------------------------------------------|--------------------------------------------------------------------|-----------------------------------------------------------------------|
+| [@pcwalton](https://github.com/pcwalton/)                                       | Initial author. Largely shaped this library.                       | [pcwalton/libui-rs](https://github.com/pcwalton/libui-rs)             |
+| [@NoraCodes](https://github.com/NoraCodes/) and others                          | Further development and maintenance.                               | [rust-native-ui/libui-rs](https://github.com/rust-native-ui/libui-rs) |
+| [@tobia](https://github.com/tobia)                                              | `libui::build!` macro for easier UI description.                   | [tobia/iui-builder](https://github.com/tobia/iui-builder)             |
+| [@andlabs](https://github.com/andlabs)                                          | Author of the C library `libui`.                                   | [andlabs/libui](https://github.com/andlabs/libui)                     |
+| [@szanni](https://github.com/szanni) and [@cody271](https://github.com/cody271) | Maintainers of `libui-ng`. The underlying library to this wrapper. | [libui-ng/libui-ng](https://github.com/libui-ng/libui-ng)             |
