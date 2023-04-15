@@ -7,7 +7,8 @@ project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 ## [0.2.0]
 
 ### Added
-- `libui::build!` macro for easier UI description
+- `libui::layout!` macro for easier UI description
+- `libui::menu!` macro for main menu creation.
 
 ### Changed
 - No API changes.

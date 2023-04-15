@@ -10,18 +10,22 @@ fn main() {
     let ui = UI::init().unwrap();
 
     // Menus must be created before the window. They belong to the window automatically.
-    let menu_file = libui::menus::Menu::new("File");
-    let menu_file_open = menu_file.append_item("Open");
-    let menu_file_save = menu_file.append_item("Save");
-    let menu_file_close = menu_file.append_item("Close");
-    menu_file.append_separator();
-    let menu_file_quit = menu_file.append_item("Exit");
-    let menu_help = libui::menus::Menu::new("Help");
-    let menu_help_about = menu_help.append_item("About");
+    libui::menu! { &ui,
+        let menu_file = Menu("File") {
+            let menu_file_open = MenuItem("Open")
+            let menu_file_save = MenuItem("Save")
+            let menu_file_close = MenuItem("Close")
+            Separator()
+            let menu_file_quit = MenuItem("Exit")
+        }
+        let menu_help = Menu("Help") {
+            let menu_help_about = MenuItem("About")
+        }
+    }
 
     // Set up the application's layout
     let mut window = Window::new(&ui, "Text Editor", 640, 480, WindowType::HasMenubar);
-    libui::build! { &ui,
+    libui::layout! { &ui,
         let layout = VerticalBox() {
             Stretchy: let entry = MultilineEntry()
         }

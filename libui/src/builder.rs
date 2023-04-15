@@ -1,17 +1,17 @@
 /// Creates layout code from a compact, declarative and hierarchical UI description.
-/// 
+///
 /// # Example
-/// 
+///
 /// For a more example, see the [builder example application](https://github.com/libui-rs/libui/tree/development/libui/examples) in the repository.
-/// 
+///
 /// ```no_run
 /// extern crate libui;
 /// use libui::prelude::*;
-/// 
+///
 /// fn main() {
 ///     let ui = UI::init().unwrap();
-/// 
-///     libui::build! { &ui,
+///
+///     libui::layout! { &ui,
 ///         let layout = VerticalBox(padded: true) {
 ///             Compact: let form = Form(padded: true) {
 ///                 (Compact, "User"): let tb_user = Entry()
@@ -20,17 +20,17 @@
 ///             Stretchy: let bt_submit = Button("Submit")
 ///         }
 ///     }
-/// 
-///     let mut window = Window::new(&ui, "Builder Example", 320, 200, 
+///
+///     let mut window = Window::new(&ui, "Builder Example", 320, 200,
 ///         WindowType::NoMenubar);
-/// 
+///
 ///     window.set_child(layout);
 ///     window.show();
 ///     ui.main();
 /// }
 /// ```
 #[macro_export]
-macro_rules! build {
+macro_rules! layout {
 
     // ---------------------- Controls without children -----------------------
 
@@ -210,7 +210,7 @@ macro_rules! build {
         let mut $ctl = libui::controls::Form::new();
         $( $ctl.set_padded($padded); )?
         $(
-            libui::build! { $ui, let $child = $type ($($opt)*) $({$($body)*})? }
+            libui::layout! { $ui, let $child = $type ($($opt)*) $({$($body)*})? }
             $ctl.append($name, $child.clone(),
                     libui::controls::LayoutStrategy::$strategy);
         )*
@@ -227,7 +227,7 @@ macro_rules! build {
         let mut $ctl = libui::controls::Group::new($title);
         $( $ctl.set_margined($margined); )?
         $(
-            libui::build! { $ui, let $child = $type ($($opt)*) $({$($body)*})? }
+            libui::layout! { $ui, let $child = $type ($($opt)*) $({$($body)*})? }
             $ctl.set_child($child.clone());
         )?
     ];
@@ -244,7 +244,7 @@ macro_rules! build {
         let mut $ctl = libui::controls::HorizontalBox::new();
         $( $ctl.set_padded($padded); )?
         $(
-            libui::build! { $ui, let $child = $type ($($opt)*) $({$($body)*})? }
+            libui::layout! { $ui, let $child = $type ($($opt)*) $({$($body)*})? }
             $ctl.append($child.clone(),
                         libui::controls::LayoutStrategy::$strategy);
         )*
@@ -263,7 +263,7 @@ macro_rules! build {
         let mut $ctl = libui::controls::LayoutGrid::new();
         $( $ctl.set_padded($padded); )?
         $(
-            libui::build! { $ui, let $child = $type ($($opt)*) $({$($body)*})? }
+            libui::layout! { $ui, let $child = $type ($($opt)*) $({$($body)*})? }
             $ctl.append($child.clone(), $x, $y, $xspan, $yspan,
                         libui::controls::GridExpand::$expand,
                         libui::controls::GridAlignment::$halign,
@@ -282,7 +282,7 @@ macro_rules! build {
         #[allow(unused_mut)]
         let mut $ctl = libui::controls::TabGroup::new();
         $(
-            libui::build! { $ui, let $child = $type ($($opt)*) $({$($body)*})? }
+            libui::layout! { $ui, let $child = $type ($($opt)*) $({$($body)*})? }
             let __tab_n = $ctl.append($name, $child.clone());
             $( $ctl.set_margined(__tab_n - 1, $margined); )?
         )*
@@ -300,9 +300,100 @@ macro_rules! build {
         let mut $ctl = libui::controls::VerticalBox::new();
         $( $ctl.set_padded($padded); )?
         $(
-            libui::build! { $ui, let $child = $type ($($opt)*) $({$($body)*})? }
+            libui::layout! { $ui, let $child = $type ($($opt)*) $({$($body)*})? }
             $ctl.append($child.clone(),
                         libui::controls::LayoutStrategy::$strategy);
         )*
+    ];
+}
+
+
+
+/// Creates menu entries for the applications main menu from a hierarchical description.
+/// 
+/// # Example
+///
+/// ```no_run
+/// extern crate libui;
+/// use libui::prelude::*;
+/// 
+/// fn main() {
+///     let ui = UI::init().unwrap();
+/// 
+///     libui::menu! { &ui,
+///         let menu_file = Menu("File") {
+///             let menu_file_open = MenuItem("Open")
+///             let menu_file_save = MenuItem("Save")
+///             let menu_file_close = MenuItem("Close")
+///             Separator()
+///             let menu_file_quit = MenuItem("Exit")
+///         }
+///         let menu_settings = Menu("Settings") {
+///             let menu_settings_num = MenuItem("Line Numbers", checked: true)
+///         }
+///         let menu_help = Menu("Help") {
+///             let menu_help_about = MenuItem("About")
+///         }
+///     }
+/// 
+///     let mut window = Window::new(&ui, "Title", 300, 200, WindowType::HasMenubar);
+///     libui::layout! { &ui,
+///         let layout = VerticalBox() { }
+///     }
+///     window.set_child(layout);
+///     window.show();
+///     ui.main();
+/// }
+/// ```
+#[macro_export]
+macro_rules! menu {
+
+    // End recursion
+    [@impl $parent:ident,] => [];
+
+    // MenuItem
+    [@impl $parent:ident,
+        let $item:ident = MenuItem ( $text:expr )
+        $($tail:tt)*
+    ] => [
+        #[allow(unused_mut)]
+        let mut $item = $parent.append_item($text);
+        libui::menu! { @impl $parent, $($tail)* }
+    ];
+
+    // Checked MenuItem
+    [@impl $parent:ident,
+        let $item:ident = MenuItem ( $text:expr, checked: $checked:expr )
+        $($tail:tt)*
+    ] => [
+        #[allow(unused_mut)]
+        let mut $item = $parent.append_check_item($text);
+        $item.set_checked($checked);
+        libui::menu! { @impl $parent, $($tail)* }
+    ];
+
+    // Separator
+    [@impl $parent:ident,
+        Separator ( )
+        $($tail:tt)*
+    ] => [
+        $parent.append_separator();
+        libui::menu! { @impl $parent, $($tail)* }
+    ];
+
+    // Menu
+    [ $ui:expr ,
+        $( 
+            let $menu:ident = Menu ( $name:expr )
+            {
+                $($tail:tt)*
+            }
+        )+
+    ] => [
+        $(
+            #[allow(unused_mut)]
+            let mut $menu = libui::menus::Menu::new( $name );
+            libui::menu! { @impl $menu, $($tail)* }
+        )+
     ];
 }

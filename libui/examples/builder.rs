@@ -11,7 +11,7 @@ fn main() {
     // The macro based builder vastly reduces the amount of code required
     // to build complex user interfaces. Compare this example to the "controlgallery".
     // It creates mostly the same UI in a fraction of lines.
-    libui::build! { &ui,
+    libui::layout! { &ui,
         let layout = HorizontalBox() {
             Stretchy: let tabs = TabGroup() {
                 // TAB PAGE 1
