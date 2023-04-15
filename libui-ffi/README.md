@@ -23,5 +23,4 @@ Not sure. MinGW-64 instead of MSVC does compile and link. libui applications com
 ## Patches
 
 This crate applies some patches to libui-ng to provide a better experience. Please see the `patches` directory.
-* `fix_container_performance.patch` - libui-ng suffers from horrible performance under Windows due to some custom drawing related to container controls. The patch fixes that, with the drawback that now only solid color backgrounds are rendered correctly. Fortunately all default Windows themes since Vista have solid color backgrounds on their controls.
 * `allow_small_pbar.patch` - The progress bar minimum width is reduced for Windows to better match the behaviour of GTK and Cocoa progress bars.

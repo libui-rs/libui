@@ -32,11 +32,6 @@ fn main() {
             if target_os == "windows" {
                 Command::new("git")
                     .current_dir("libui")
-                    .args(&["apply", "../patches/fix_container_performance.patch"])
-                    .status()
-                    .expect("Unable to apply patch. Error");
-                Command::new("git")
-                    .current_dir("libui")
                     .args(&["apply", "../patches/allow_small_pbar.patch"])
                     .status()
                     .expect("Unable to apply patch. Error");
