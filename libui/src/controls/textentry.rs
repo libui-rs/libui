@@ -5,12 +5,12 @@
 
 use super::Control;
 use callback_helpers::{from_void_ptr, to_heap_ptr};
+use libui_ffi::{self, uiControl, uiEntry, uiMultilineEntry};
 use std::ffi::{CStr, CString};
 use std::mem;
 use std::os::raw::c_int;
 use std::os::raw::c_void;
 use str_tools::{from_toolkit_string, to_toolkit_string};
-use libui_ffi::{self, uiControl, uiEntry, uiMultilineEntry};
 
 pub trait TextEntry {
     fn value(&self) -> String;
@@ -63,6 +63,11 @@ impl SearchEntry {
 impl MultilineEntry {
     pub fn new() -> MultilineEntry {
         unsafe { MultilineEntry::from_raw(libui_ffi::uiNewMultilineEntry()) }
+    }
+
+    /// Creates an entry that doesn't wrap the text or resize, but has horizontal scrollbars instead.
+    pub fn new_nonwrapping() -> MultilineEntry {
+        unsafe { MultilineEntry::from_raw(libui_ffi::uiNewNonWrappingMultilineEntry()) }
     }
 
     pub fn append(&mut self, value: &str) {

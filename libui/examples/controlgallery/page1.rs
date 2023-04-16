@@ -26,13 +26,13 @@ pub fn make_basic_page(_ui: UI) -> Control {
     let entry_pwd = PasswordEntry::new();
     let entry_search = SearchEntry::new();
     let entry_multi = MultilineEntry::new();
-    let entry_nowrap = MultilineEntry::new();
+    let entry_nowrap = MultilineEntry::new_nonwrapping();
 
     form.append("Entry", entry, LayoutStrategy::Compact);
     form.append("Password Entry", entry_pwd, LayoutStrategy::Compact);
     form.append("Search Entry", entry_search, LayoutStrategy::Compact);
-    form.append("Multiline Entry", entry_multi, LayoutStrategy::Compact);
-    form.append("Non-wrapping Entry", entry_nowrap, LayoutStrategy::Compact);
+    form.append("Multiline Entry", entry_multi, LayoutStrategy::Stretchy);
+    form.append("Non-wrapping Entry", entry_nowrap, LayoutStrategy::Stretchy);
 
     let mut group = Group::new("Entries");
     group.set_margined(true);

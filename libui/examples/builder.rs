@@ -28,7 +28,7 @@ fn main() {
                             (Compact, "Password Entry"): let entry_pwd = Entry()
                             (Compact, "Search Entry"): let entry_search = SearchEntry()
                             (Stretchy, "Multiline Entry"): let entry_multi = MultilineEntry()
-                            (Compact, "Non-wrapping Entry"): let entry_nowrap = MultilineEntry()
+                            (Stretchy, "Non-wrapping Entry"): let entry_nowrap = MultilineEntry( wrapping: false )
                         }
                     }
                 }

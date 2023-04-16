@@ -129,6 +129,18 @@ macro_rules! layout {
         let mut $ctl = libui::controls::MultilineEntry::new();
     ];
 
+    // MultilineEntry, wrapping option
+    [ $ui:expr ,
+        let $ctl:ident = MultilineEntry ( wrapping: $wrapping:expr )
+    ] => [
+        #[allow(unused_mut)]
+        let mut $ctl = if $wrapping {
+            libui::controls::MultilineEntry::new()
+        } else {
+            libui::controls::MultilineEntry::new_nonwrapping()
+        };
+    ];
+
     // PasswordEntry
     [ $ui:expr ,
         let $ctl:ident = PasswordEntry ()
@@ -307,19 +319,17 @@ macro_rules! layout {
     ];
 }
 
-
-
 /// Creates menu entries for the applications main menu from a hierarchical description.
-/// 
+///
 /// # Example
 ///
 /// ```no_run
 /// extern crate libui;
 /// use libui::prelude::*;
-/// 
+///
 /// fn main() {
 ///     let ui = UI::init().unwrap();
-/// 
+///
 ///     libui::menu! { &ui,
 ///         let menu_file = Menu("File") {
 ///             let menu_file_open = MenuItem("Open")
@@ -335,7 +345,7 @@ macro_rules! layout {
 ///             let menu_help_about = MenuItem("About")
 ///         }
 ///     }
-/// 
+///
 ///     let mut window = Window::new(&ui, "Title", 300, 200, WindowType::HasMenubar);
 ///     libui::layout! { &ui,
 ///         let layout = VerticalBox() { }
@@ -383,7 +393,7 @@ macro_rules! menu {
 
     // Menu
     [ $ui:expr ,
-        $( 
+        $(
             let $menu:ident = Menu ( $name:expr )
             {
                 $($tail:tt)*
