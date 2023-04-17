@@ -292,7 +292,6 @@ fn main() {
                 "darwin/image.m",
                 "darwin/label.m",
                 "darwin/main.m",
-                "darwin/map.m",
                 "darwin/menu.m",
                 "darwin/multilineentry.m",
                 "darwin/opentype.m",
