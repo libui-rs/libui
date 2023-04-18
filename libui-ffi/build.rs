@@ -294,6 +294,7 @@ fn main() {
                 "darwin/main.m",
                 "darwin/menu.m",
                 "darwin/multilineentry.m",
+                "darwin/nstextfield.m",
                 "darwin/opentype.m",
                 "darwin/progressbar.m",
                 "darwin/radiobuttons.m",
