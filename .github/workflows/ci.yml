@@ -32,7 +32,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Build
-        run: cargo build --verbose
+        run: cargo build
+      # Documentation samples would require a display!
+      - name: Build doc samples
+        run: cargo test --doc --no-run
       - name: Run tests
-        run: cargo test --verbose
+        run: cargo test --all-targets
 
