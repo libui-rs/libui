@@ -1,11 +1,12 @@
 on:
   push:
-    branches: [ "ci" ]
+    branches: [ "master", "ci" ]
   pull_request:
-    branches: [ "ci", "development" ]
+    branches: [ "master", "development" ]
 
 jobs:
   build-linux:
+    name: build (ubuntu-latest)
     runs-on: ubuntu-latest
 
     steps:
@@ -19,6 +20,7 @@ jobs:
         run: cargo test --verbose
 
   build:
+    # Run expensive platforms last!
     needs:
       - build-linux
     runs-on: ${{ matrix.os }}
