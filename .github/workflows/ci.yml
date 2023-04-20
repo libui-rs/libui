@@ -1,0 +1,40 @@
+on:
+  push:
+    branches: [ "master", "ci" ]
+  pull_request:
+    branches: [ "master", "development" ]
+
+name: CI
+
+jobs:
+  build-linux:
+    name: build (ubuntu-latest)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install libgtk-3-dev
+        run: sudo apt-get install -y libgtk-3-dev
+      - name: Build
+        run: cargo build
+      - name: Run tests
+        run: cargo test --verbose
+
+  build:
+    # Run expensive platforms last!
+    needs:
+      - build-linux
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - windows-latest
+          - macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build
+        run: cargo build
+

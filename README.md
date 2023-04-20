@@ -1,5 +1,13 @@
-# libui [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT) [![License: Apache](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+# libui [![Crates.io][crates-badge]][crates-url] [![Build Status][build-badge]][build-url] [![License: MIT][mit-badge]][mit-url] [![License: Apache][apc-badge]][apc-url]
 
+[crates-badge]: https://img.shields.io/crates/v/libui.svg
+[crates-url]: https://crates.io/crates/libui
+[build-badge]: https://github.com/libui-rs/libui/actions/workflows/ci.yml/badge.svg?branch=master
+[build-url]: https://github.com/libui-rs/libui/actions?query=workflow%3ACI+branch%3Amaster
+[mit-badge]: https://img.shields.io/badge/License-MIT-brightgreen.svg
+[mit-url]:https://opensource.org/licenses/MIT
+[apc-badge]: https://img.shields.io/badge/License-Apache%202.0-blue.svg
+[apc-url]:https://opensource.org/licenses/Apache-2.0
 
 ## The native cross-platform UI toolkit for Rust
 

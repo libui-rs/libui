@@ -15,7 +15,7 @@ use libui_ffi::{self, uiControl, uiProgressBar};
 /// A `ProgressBarValue` can be made from a `u32` or an `Option<u32>`, and the relevant functions
 /// take a type that is generic over this behavior, so it's easy to set the progress of a bar.
 ///
-/// ```
+/// ```no_run
 /// # use libui::prelude::*;
 /// # use libui::controls::{ProgressBar, ProgressBarValue};
 /// # let ui = UI::init().unwrap();

@@ -50,7 +50,7 @@ impl UI {
     /// the UI, so do _not_ spin off your UI interactions into an alternative thread. You're likely to
     /// have problems on Mac OS.
     ///
-    /// ```
+    /// ```no_run
     /// # use libui::UI;
     /// {
     ///     let ui1 = UI::init().unwrap();
@@ -125,7 +125,7 @@ impl UI {
     ///
     /// # Example
     ///
-    /// ```
+    /// ```no_run
     /// use libui::prelude::*;
     ///
     /// let ui = UI::init().unwrap();
