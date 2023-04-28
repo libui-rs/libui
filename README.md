@@ -21,7 +21,7 @@ Technically, `libui` is a "rustification" wrapper over the C library [`libui-ng`
 Add `libui` to your dependency list in `cargo.toml` with:
 
 ```toml
-libui = "0.1.0"
+libui = "0.2.0"
 ```
 
 or use the latest version from the repository:
