@@ -5,7 +5,6 @@ use controls::Window;
 use std::ffi::CString;
 use std::os::raw::{c_int, c_void};
 use libui_ffi::{self, uiMenu, uiMenuItem, uiWindow};
-use UI;
 
 /// A `MenuItem` represents an item that is shown in a `Menu`. Note that, unlike many controls,
 /// the text on `MenuItem`s cannot be changed after creation.

@@ -169,7 +169,7 @@ fn main() {
                     env::set_var(key, value);
                 }
             }
-            embed_resource::compile(src_path("/windows/resources.rc"));
+            embed_resource::compile(src_path("/windows/resources.rc"), embed_resource::NONE);
 
             link("user32", false);
             link("kernel32", false);
