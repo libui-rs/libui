@@ -1,6 +1,6 @@
 [package]
 name = "libui"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Jakob K <jjk@outlook.at>"]
 description = "A native, cross-platform and lightweight UI toolkit."
 
@@ -29,4 +29,4 @@ license = "MIT"
 [dependencies]
 bitflags = "1"
 libc = "0.2"
-libui-ffi = { path = "../libui-ffi", version = "0.2.0" }
+libui-ffi = { path = "../libui-ffi", version = "0.3.0" }

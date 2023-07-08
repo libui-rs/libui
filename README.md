@@ -68,11 +68,15 @@ For more screenshots, see [`here`](https://github.com/libui-rs/libui/tree/develo
 
 ## Compatibility
 
-`libui` was successfully tested on:
+`libui` 0.2.0 is edition 2018 suitable and was successfully tested on:
 * Windows 7 SP1
 * Windows 10 22H2
 * Debian 12 w/ GNOME 43 & GTK 3.24
 * macOS Big Sur 11.6
+
+`libui` 0.3.0 is edition 2021 suitable and was successfully tested on:
+
+* Debian 12 w/ GNOME 43 & GTK 3.24
 
 ## Prerequisits & Building
 
