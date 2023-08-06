@@ -1,10 +1,9 @@
-//! Tools for making platform-independent string handling work properly
+//! Tools for making platform-independent string handling work properly.
 
 use std::ffi::{CStr, CString};
 use std::os::raw::c_char;
 
-/// Replaces every occurrance of `"\r\n"` with a single newline `\n`, without collapsing
-/// newlines.
+/// Replaces every occurrence of `"\r\n"` with a single newline `\n`.
 pub fn strip_dual_endings(s: &str) -> String {
     s.replace("\r\n", "\n")
 }
