@@ -49,6 +49,9 @@ fn main() {
         .header("wrapper.h")
         .opaque_type("max_align_t") // For some reason this ends up too large
         //.rustified_enum(".*")
+        .clang_args([
+            "-target", &target_triple,
+        ])
         .trust_clang_mangling(false) // clang sometimes wants to treat these functions as C++
         .generate()
         .expect("Unable to generate bindings");
