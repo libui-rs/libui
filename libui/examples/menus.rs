@@ -14,12 +14,14 @@ fn main() {
         let menu_file = Menu("File") {
             let menu_file_open = MenuItem("Open")
             let menu_file_save = MenuItem("Save")
-            let menu_file_close = MenuItem("Close")
             Separator()
-            let menu_file_quit = MenuItem("Exit")
+            let menu_file_close = MenuItem("Close")
+            let menu_file_pref = PreferencesItem()
+            let _menu_file_quit = QuitItem()
         }
         let menu_help = Menu("Help") {
-            let menu_help_about = MenuItem("About")
+            let _menu_help_updates = MenuItem("Updates")
+            let menu_help_about = AboutItem()
         }
     }
 
@@ -101,14 +103,19 @@ fn main() {
         }
     });
 
-    menu_file_quit.on_clicked({
+    menu_file_pref
+        .on_clicked(move |_, w| w.modal_msg("Preferences", "Preferences menu item clicked!"));
+
+    menu_help_about.on_clicked(move |_, w| w.modal_msg("About", "libui: Menu Example"));
+
+    // The special MenuItem from `Menu::append_quit_item()` or a `libui::menu! { QuitMenuItem() }` macro
+    // doesn't accept a callback with MenuItem::on_clicked(). Instead, call UI::on_should_quit() instead.
+    ui.on_should_quit({
         let ui = ui.clone();
-        move |_, _| {
+        move || {
             ui.quit();
         }
     });
-
-    menu_help_about.on_clicked(move |_, w| w.modal_msg("About", "libui: Menu Example"));
 
     window.show();
     ui.main();

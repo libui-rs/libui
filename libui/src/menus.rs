@@ -110,4 +110,42 @@ impl Menu {
     pub fn append_separator(&self) {
         unsafe { libui_ffi::uiMenuAppendSeparator(self.ui_menu) }
     }
+
+    /// Adds an `About` menu item.
+    ///
+    /// Depending on you platform, this can be a special system item.
+    /// Warning: Only one such menu item may exist per application.
+    pub fn append_about_item(&self) -> MenuItem {
+        unsafe {
+            MenuItem {
+                ui_menu_item: libui_ffi::uiMenuAppendAboutItem(self.ui_menu),
+            }
+        }
+    }
+
+    /// Adds a `Quit` menu item.
+    ///
+    /// Depending on you platform, this can be a special system item.
+    /// Warning: You can't call on_clicked(). Instead use `UI::on_should_quit()`
+    /// to register the callback.
+    /// Warning: Only one such menu item may exist per application.
+    pub fn append_quit_item(&self) -> MenuItem {
+        unsafe {
+            MenuItem {
+                ui_menu_item: libui_ffi::uiMenuAppendQuitItem(self.ui_menu),
+            }
+        }
+    }
+
+    /// Adds a `Preferences` menu item.
+    ///
+    /// Depending on you platform, this can be a special system item.
+    /// Warning: Only one such menu item may exist per application.
+    pub fn append_preferences_item(&self) -> MenuItem {
+        unsafe {
+            MenuItem {
+                ui_menu_item: libui_ffi::uiMenuAppendPreferencesItem(self.ui_menu),
+            }
+        }
+    }
 }

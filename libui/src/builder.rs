@@ -382,6 +382,36 @@ macro_rules! menu {
         libui::menu! { @impl $parent, $($tail)* }
     ];
 
+    // About MenuItem
+    [@impl $parent:ident,
+        let $item:ident = AboutItem ( )
+        $($tail:tt)*
+    ] => [
+        #[allow(unused_mut)]
+        let mut $item = $parent.append_about_item();
+        libui::menu! { @impl $parent, $($tail)* }
+    ];
+
+    // Quit MenuItem
+    [@impl $parent:ident,
+        let $item:ident = QuitItem ( )
+        $($tail:tt)*
+    ] => [
+        #[allow(unused_mut)]
+        let mut $item = $parent.append_quit_item();
+        libui::menu! { @impl $parent, $($tail)* }
+    ];
+
+    // Preferences MenuItem
+    [@impl $parent:ident,
+        let $item:ident = PreferencesItem ( )
+        $($tail:tt)*
+    ] => [
+        #[allow(unused_mut)]
+        let mut $item = $parent.append_preferences_item();
+        libui::menu! { @impl $parent, $($tail)* }
+    ];
+
     // Separator
     [@impl $parent:ident,
         Separator ( )
