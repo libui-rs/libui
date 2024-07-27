@@ -126,8 +126,8 @@ impl Window {
     /// Set whether or not this window is resizeable by the user at runtime.
     /// 
     /// This method is merely a hint and may be ignored by the system.
-    pub fn set_resizeable(&mut self, resizable: bool) {
-        unsafe { libui_ffi::uiWindowSetResizeable(self.uiWindow, resizable as c_int) }
+    pub fn set_resizeable(&mut self, resizeable: bool) {
+        unsafe { libui_ffi::uiWindowSetResizeable(self.uiWindow, resizeable as c_int) }
     }
 
     /// Sets the window's child widget. The window can only have one child widget at a time.
