@@ -25,7 +25,7 @@ fn main() {
                     Stretchy: let input_group = Group("Entries") {
                         let form = Form(padded: true) {
                             (Compact, "Entry"): let entry = Entry()
-                            (Compact, "Password Entry"): let entry_pwd = Entry()
+                            (Compact, "Password Entry"): let entry_pwd = PasswordEntry()
                             (Compact, "Search Entry"): let entry_search = SearchEntry()
                             (Stretchy, "Multiline Entry"): let entry_multi = MultilineEntry()
                             (Stretchy, "Non-wrapping Entry"): let entry_nowrap = MultilineEntry( wrapping: false )
