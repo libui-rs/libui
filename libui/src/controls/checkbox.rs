@@ -1,3 +1,4 @@
+use std::ffi::{CStr, CString};
 use super::Control;
 use callback_helpers::{from_void_ptr, to_heap_ptr};
 use std::i32;
@@ -46,6 +47,28 @@ impl Checkbox {
                 Some(c_callback::<F>),
                 to_heap_ptr(callback),
             );
+        }
+    }
+
+    /// Get a copy of the existing text on the checkbox.
+    pub fn text(&self) -> String {
+        unsafe {
+            CStr::from_ptr(libui_ffi::uiCheckboxText(self.uiCheckbox))
+                .to_string_lossy()
+                .into_owned()
+        }
+    }
+
+    /// Get a reference to the existing text on the checkbox.
+    pub fn text_ref(&self) -> &CStr {
+        unsafe { CStr::from_ptr(libui_ffi::uiCheckboxText(self.uiCheckbox)) }
+    }
+
+    /// Set the text label on the checkbox
+    pub fn set_text(&mut self, text: &str) {
+        unsafe {
+            let c_string = CString::new(text.as_bytes().to_vec()).unwrap();
+            libui_ffi::uiCheckboxSetText(self.uiCheckbox, c_string.as_ptr())
         }
     }
 }
