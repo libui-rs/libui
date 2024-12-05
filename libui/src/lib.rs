@@ -52,7 +52,7 @@ pub mod str_tools;
 mod ui;
 
 pub use error::UIError;
-pub use ui::{EventLoop, UI};
+pub use ui::{EventLoop, EventQueue, UI};
 
 /// Common imports are packaged into this module. It's meant to be glob-imported: `use libui::prelude::*`.
 pub mod prelude {
