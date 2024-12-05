@@ -275,21 +275,21 @@ impl EventQueue {
     /// Tries to enqueue the callback to event queue for the main thread
     /// 
     /// Returns false if the `UI` is already dropped and unable to queue the event.
-    pub fn queue_main<F: FnMut() + 'static + Send>(&self, callback: F) -> bool {
+    pub fn queue_main<F: FnOnce() + 'static + Send>(&self, callback: F) -> bool {
         let initialized = self.initialized.read().unwrap();
 
         if !*initialized {
             return false;
         }
 
-        extern "C" fn c_callback<G: FnMut()>(data: *mut c_void) {
+        extern "C" fn c_callback<G: FnOnce()>(data: *mut c_void) {
             unsafe {
-                from_void_ptr::<G>(data)();
+                from_void_ptr::<Option<G>>(data).take().map(|f| f());
             }
         }
 
         unsafe {
-            libui_ffi::uiQueueMain(Some(c_callback::<F>), to_heap_ptr(callback));
+            libui_ffi::uiQueueMain(Some(c_callback::<F>), to_heap_ptr(Some(callback)));
         }
 
         true
