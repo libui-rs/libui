@@ -8,6 +8,7 @@ use std::ffi::CStr;
 use std::marker::PhantomData;
 use std::mem;
 use std::rc::Rc;
+use std::sync::{Arc, RwLock};
 use std::thread;
 use std::time::{Duration, SystemTime};
 
@@ -17,6 +18,16 @@ use controls::Window;
 struct UIToken {
     // This PhantomData prevents UIToken from being Send and Sync
     _pd: PhantomData<*mut ()>,
+    initialized: Arc<RwLock<bool>>
+}
+
+impl UIToken {
+    fn new() -> Self {
+        Self {
+            _pd: PhantomData,
+            initialized: Arc::new(RwLock::new(true))
+        }
+    }
 }
 
 impl Drop for UIToken {
@@ -25,6 +36,7 @@ impl Drop for UIToken {
             ffi_tools::is_initialized(),
             "Attempted to uninit libUI in UIToken destructor when libUI was not initialized!"
         );
+        *self.initialized.write().unwrap() = false;
         unsafe {
             Window::destroy_all_windows();
             libui_ffi::uiUninit();
@@ -83,7 +95,7 @@ impl UI {
                 // Success! We can safely give the user a token allowing them to do UI things.
                 ffi_tools::set_initialized();
                 Ok(UI {
-                    _token: Rc::new(UIToken { _pd: PhantomData }),
+                    _token: Rc::new(UIToken::new()),
                 })
             } else {
                 // Error occurred; copy the string describing it, then free that memory.
@@ -111,6 +123,13 @@ impl UI {
             _pd: PhantomData,
             callback: None,
         };
+    }
+
+    /// Returns an `EventQueue`, a struct that allows you to queue closure from other threads
+    pub fn event_queue(&self) -> EventQueue {
+        EventQueue {
+            initialized: self._token.initialized.clone(),
+        }
     }
 
     /// Running this function causes the UI to quit, exiting from [main](struct.UI.html#method.main) and no longer showing any widgets.
@@ -244,5 +263,35 @@ impl<'s> EventLoop<'s> {
         } else {
             self.run()
         }
+    }
+}
+
+/// The struct to enqueue a closure from another thread
+pub struct EventQueue {
+    initialized: Arc<RwLock<bool>>,
+}
+
+impl EventQueue {
+    /// Tries to enqueue the callback to event queue for the main thread
+    /// 
+    /// Returns false if the `UI` is already dropped and unable to queue the event.
+    pub fn queue_main<F: FnMut() + 'static + Send>(&self, callback: F) -> bool {
+        let initialized = self.initialized.read().unwrap();
+
+        if !*initialized {
+            return false;
+        }
+
+        extern "C" fn c_callback<G: FnMut()>(data: *mut c_void) {
+            unsafe {
+                from_void_ptr::<G>(data)();
+            }
+        }
+
+        unsafe {
+            libui_ffi::uiQueueMain(Some(c_callback::<F>), to_heap_ptr(callback));
+        }
+
+        true
     }
 }
