@@ -1,12 +1,13 @@
 use callback_helpers::{from_void_ptr, to_heap_ptr};
 use error::UIError;
 use ffi_tools;
-use std::os::raw::{c_int, c_void};
 use libui_ffi;
+use std::os::raw::{c_int, c_void};
 
 use std::ffi::CStr;
 use std::marker::PhantomData;
 use std::mem;
+use std::mem::ManuallyDrop;
 use std::rc::Rc;
 use std::sync::{Arc, RwLock};
 use std::thread;
@@ -18,14 +19,14 @@ use controls::Window;
 struct UIToken {
     // This PhantomData prevents UIToken from being Send and Sync
     _pd: PhantomData<*mut ()>,
-    initialized: Arc<RwLock<bool>>
+    initialized: Arc<RwLock<bool>>,
 }
 
 impl UIToken {
     fn new() -> Self {
         Self {
             _pd: PhantomData,
-            initialized: Arc::new(RwLock::new(true))
+            initialized: Arc::new(RwLock::new(true)),
         }
     }
 }
@@ -273,7 +274,7 @@ pub struct EventQueue {
 
 impl EventQueue {
     /// Tries to enqueue the callback to event queue for the main thread
-    /// 
+    ///
     /// Returns false if the `UI` is already dropped and unable to queue the event.
     pub fn queue_main<F: FnOnce() + 'static + Send>(&self, callback: F) -> bool {
         let initialized = self.initialized.read().unwrap();
@@ -295,3 +296,153 @@ impl EventQueue {
         true
     }
 }
+
+/// The struct to enqueue a closure from another thread,
+/// with holding data that is `!Send`.
+/// 
+/// **Example**
+/// 
+/// ```
+/// use std::cell::RefCell;
+/// use std::rc::Rc;
+/// use libui::controls::Label;
+/// # use libui::{EventQueueWithData, UI};
+/// # fn heavy_process() -> String {
+/// #     "Success".into()
+/// # }
+/// # 
+/// # fn example(ui: &UI) {
+///
+/// // label is !Send
+/// let label = Rc::new(RefCell::new(Label::new("processing...")));
+/// let queue_with_data = EventQueueWithData::new(ui, label);
+///
+/// std::thread::spawn(|| {
+///     let result = heavy_process();
+///     queue_with_data.queue_main(|label| {
+///         // we can access label inside queue_main on main thread!
+///         label.borrow_mut().set_text(&result);
+///     })
+/// })
+///
+/// # }
+/// ```
+pub struct EventQueueWithData<T: 'static> {
+    data: Arc<DropOnQueueCell<T>>,
+}
+
+impl<T> EventQueueWithData<T> {
+    /// Creates `EventQueueWithData` with specified data
+    pub fn new(ui: &UI, data: T) -> Self {
+        // By receiving UI,
+        Self {
+            data: Arc::new(DropOnQueueCell::new(ui, data)),
+        }
+    }
+
+    /// Enqueues the callback and do so something with `T` on main thread
+    pub fn queue_main<F: FnOnce(&T) + 'static + Send>(&self, callback: F) {
+        let arc = self.data.clone();
+        let queue = &self.data.queue;
+        queue.queue_main(move || {
+            // SAFETY: current thread is main thread
+            callback(unsafe { arc.inner() });
+        });
+    }
+}
+
+/// The cell that calls [`Drop`] on the specified `EventQueue`.
+///
+/// [`Drop`]: Drop
+struct DropOnQueueCell<T: 'static> {
+    data: SendCell<T>,
+    queue: EventQueue,
+}
+
+impl<T> Drop for DropOnQueueCell<T> {
+    fn drop(&mut self) {
+        // SAFETY: self.data will never used after this call since this is in drop
+        let mut data = unsafe { self.data.clone() };
+        self.queue.queue_main(move || {
+            // SAFETY: the current thread is main thanks to `queue_main`
+            // and the data is originally owned by `self` and now owned ty `data`
+            unsafe {
+                data.drop();
+            }
+        });
+    }
+}
+
+impl<T> DropOnQueueCell<T> {
+    pub fn new(ui: &UI, data: T) -> Self {
+        // By receiving UI instead of EventQueue,
+        // we can ensure the current thread is the main thread.
+        Self {
+            queue: ui.event_queue(),
+            data: SendCell::new(data),
+        }
+    }
+
+    /// Returns reference to the inner value
+    ///
+    /// **Safety**
+    /// Current thread must be the main thread.
+    pub unsafe fn inner(&self) -> &T {
+        self.data.inner()
+    }
+}
+
+/// The cell implements Send even if T is not Send.
+///
+/// Since this cell might be on non-main thread even if `T` is `!Send` so dropping this cell will
+/// not drop inner `T`, you have to call [`drop`] manually on thread for `T`
+///
+/// [`drop`]: SendCell::drop
+struct SendCell<T: 'static> {
+    data: ManuallyDrop<T>,
+}
+
+impl<T> SendCell<T> {
+    fn new(data: T) -> Self {
+        Self {
+            data: ManuallyDrop::new(data),
+        }
+    }
+
+    /// Duplicates this cell
+    ///
+    /// **Safety**
+    /// This function semantically moves out the contained value without preventing further usage,
+    /// leaving the state of this container unchanged.
+    /// It is your responsibility to ensure that this `SendCell` is not used again.
+    unsafe fn clone(&mut self) -> SendCell<T> {
+        SendCell {
+            data: unsafe { ManuallyDrop::new(ManuallyDrop::take(&mut self.data)) },
+        }
+    }
+
+    /// Drops data inside this cell
+    ///
+    /// **Safety**
+    /// This call is safe if and only of
+    /// - The current thread is the thread `T` is created on, if `T` is `!Send`
+    /// - The data inside the cell is not dropped
+    unsafe fn drop(&mut self) {
+        ManuallyDrop::drop(&mut self.data);
+    }
+
+    /// Get reference to the inner data of this cell
+    ///
+    /// **Safety**
+    /// This call is safe if and only of
+    /// - The current thread is the thread `T` is created on, if `T` is `!Send`
+    /// - The data inside the cell is not dropped
+    unsafe fn inner(&self) -> &T {
+        &*self.data
+    }
+}
+
+// UIDataSender is to send T to another thread with safety so
+// This struct should be `Send` even if `T` is not send
+unsafe impl<T> Send for SendCell<T> {}
+unsafe impl<T> Sync for SendCell<T> {}
