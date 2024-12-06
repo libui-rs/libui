@@ -323,7 +323,7 @@ impl EventQueue {
 ///         // we can access label inside queue_main on main thread!
 ///         label.borrow_mut().set_text(&result);
 ///     })
-/// })
+/// });
 ///
 /// # }
 /// ```
