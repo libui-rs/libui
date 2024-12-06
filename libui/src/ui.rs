@@ -317,9 +317,9 @@ impl EventQueue {
 /// let label = Rc::new(RefCell::new(Label::new("processing...")));
 /// let queue_with_data = EventQueueWithData::new(ui, label);
 ///
-/// std::thread::spawn(|| {
+/// std::thread::spawn(move || {
 ///     let result = heavy_process();
-///     queue_with_data.queue_main(|label| {
+///     queue_with_data.queue_main(move |label| {
 ///         // we can access label inside queue_main on main thread!
 ///         label.borrow_mut().set_text(&result);
 ///     })
