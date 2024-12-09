@@ -79,7 +79,7 @@ For more screenshots, see [`here`](https://github.com/libui-rs/libui/tree/develo
 * Debian 12 w/ GNOME 43 & GTK 3.24
 * Windows 10 22H2
 
-## Prerequisits & Building
+## Prerequisites & Building
 
 To build the underlying `libui-ng` your system must have certain tools installed in addition to your rust toolchain. I am trying to cut down on the inconveniences as far as possible.
 
