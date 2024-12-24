@@ -151,6 +151,47 @@ impl Window {
         }
     }
 
+    /// Gets the window content size.
+    ///
+    /// The content size is the size of the window excluding the window's borders and title bar.
+    pub fn content_size(&self) -> (i32, i32) {
+        let mut width: c_int = 0;
+        let mut height: c_int = 0;
+        unsafe { libui_ffi::uiWindowContentSize(self.uiWindow, &mut width, &mut height) }
+
+        (width.into(), height.into())
+    }
+
+    /// Sets the window content size.
+    ///
+    /// The content size is the size of the window excluding the window's borders and title bar.
+    pub fn set_content_size(&mut self, width: i32, height: i32) {
+        unsafe { libui_ffi::uiWindowSetContentSize(self.uiWindow, width, height) }
+    }
+
+    /// Sets a callback to be run when the user changes the window's size.
+    ///
+    /// Note that this callback does not trigger when the window is resized through the `set_content_size` method.
+    /// It triggers when the user drags the window's edges to resize it, not when the application changes its own size.
+    pub fn on_content_size_changed<'ctx, F>(&mut self, callback: F)
+    where
+        F: FnMut(&mut Window) + 'static,
+    {
+        extern "C" fn c_callback<G>(window: *mut uiWindow, data: *mut c_void)
+        where
+            G: FnMut(&mut Window),
+        {
+            let mut window = Window { uiWindow: window };
+            unsafe {
+                from_void_ptr::<G>(data)(&mut window);
+            }
+        }
+
+        unsafe {
+            libui_ffi::uiWindowOnContentSizeChanged(self.uiWindow, Some(c_callback::<F>), to_heap_ptr(callback));
+        }
+    }
+
     /// Check whether or not this window has margins around the edges.
     pub fn margined(&self) -> bool {
         unsafe { libui_ffi::uiWindowMargined(self.uiWindow) != 0 }
