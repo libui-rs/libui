@@ -1,6 +1,6 @@
 [package]
 name = "libui-ffi"
-version = "0.3.0"
+version = "0.4.0"
 authors = ["Jakob K <jjk@outlook.at>"]
 license = "MIT"
 description = "Easy to build low-level bindings to 'libui-ng'"

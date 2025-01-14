@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this 
 project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [0.4.0]
+
+### Added
+- Added system menu items `Menu::append_<xxx>_item()` (quit/preferences/about).
+- Added `Window::set_resizeable()` and `Window::resizeable()`.
+- Added `Window::set_position()`, `Window::position()` and event callback.
+- Added `Window::set_content_size()`, `Window::content_size()` and event callback.
+- Added `Checkbox::set_text()` and `Checkbox::text()`.
+- Added `EventQueueWithData::queue_main()` to run code on the main thread. `UI::queue_main()` is unsuitable due to `UI` being `!Send`.
+
+### Fixed
+- Fixed clang build on Windows.
+- Fixed window focus after pop-up dialogs. Workaround to be removed some day.
+
 ## [0.3.0]
 
 ### Changed

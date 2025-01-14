@@ -21,7 +21,7 @@ Technically, `libui` is a "rustification" wrapper over the C library [`libui-ng`
 Add `libui` to your dependency list in `cargo.toml` with:
 
 ```toml
-libui = "0.3.0"
+libui = "0.4.0"
 ```
 
 or use the latest version from the repository:
@@ -75,6 +75,11 @@ For more screenshots, see [`here`](https://github.com/libui-rs/libui/tree/develo
 * macOS Big Sur 11.6
 
 `libui` 0.3.0 works down to edition 2021 and was successfully tested on:
+
+* Debian 12 w/ GNOME 43 & GTK 3.24
+* Windows 10 22H2
+
+`libui` 0.4.0 works down to edition 2021 and was successfully tested on:
 
 * Debian 12 w/ GNOME 43 & GTK 3.24
 * Windows 10 22H2

@@ -29,4 +29,4 @@ license = "MIT"
 [dependencies]
 bitflags = "1"
 libc = "0.2"
-libui-ffi = { path = "../libui-ffi", version = "0.3.0" }
+libui-ffi = { path = "../libui-ffi", version = "0.4.0" }
