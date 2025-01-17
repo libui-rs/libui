@@ -143,7 +143,6 @@ impl TextEntry for PasswordEntry {
             unsafe {
                 let string = from_toolkit_string(libui_ffi::uiEntryText(entry));
                 mem::transmute::<*mut c_void, &mut Box<dyn FnMut(String)>>(data)(string);
-                mem::forget(entry);
             }
         }
     }
