@@ -16,6 +16,8 @@ pub trait TextEntry {
     fn value(&self) -> String;
     fn set_value(&mut self, value: &str);
     fn on_changed<'ctx, F: FnMut(String) + 'static>(&mut self, callback: F);
+    fn readonly(&self) -> bool;
+    fn set_readonly(&mut self, readonly: bool);
 }
 
 define_control! {
@@ -74,14 +76,6 @@ impl MultilineEntry {
         let cstring = to_toolkit_string(value);
         unsafe { libui_ffi::uiMultilineEntryAppend(self.uiMultilineEntry, cstring.as_ptr()) }
     }
-
-    pub fn readonly(&self) -> bool {
-        unsafe { libui_ffi::uiMultilineEntryReadOnly(self.uiMultilineEntry) != 0 }
-    }
-
-    pub fn set_readonly(&mut self, readonly: bool) {
-        unsafe { libui_ffi::uiMultilineEntrySetReadOnly(self.uiMultilineEntry, readonly as c_int) }
-    }
 }
 
 impl TextEntry for Entry {
@@ -111,6 +105,14 @@ impl TextEntry for Entry {
         unsafe {
             libui_ffi::uiEntryOnChanged(self.uiEntry, Some(c_callback::<F>), to_heap_ptr(callback));
         }
+    }
+
+    fn readonly(&self) -> bool {
+        unsafe { libui_ffi::uiEntryReadOnly(self.uiEntry) != 0 }
+    }
+
+    fn set_readonly(&mut self, readonly: bool) {
+        unsafe { libui_ffi::uiEntrySetReadOnly(self.uiEntry, readonly as c_int) }
     }
 }
 
@@ -146,6 +148,14 @@ impl TextEntry for PasswordEntry {
             }
         }
     }
+
+    fn readonly(&self) -> bool {
+        unsafe { libui_ffi::uiEntryReadOnly(self.uiEntry) != 0 }
+    }
+
+    fn set_readonly(&mut self, readonly: bool) {
+        unsafe { libui_ffi::uiEntrySetReadOnly(self.uiEntry, readonly as c_int) }
+    }
 }
 
 impl TextEntry for SearchEntry {
@@ -176,6 +186,14 @@ impl TextEntry for SearchEntry {
         unsafe {
             libui_ffi::uiEntryOnChanged(self.uiEntry, Some(c_callback::<F>), to_heap_ptr(callback));
         }
+    }
+
+    fn readonly(&self) -> bool {
+        unsafe { libui_ffi::uiEntryReadOnly(self.uiEntry) != 0 }
+    }
+
+    fn set_readonly(&mut self, readonly: bool) {
+        unsafe { libui_ffi::uiEntrySetReadOnly(self.uiEntry, readonly as c_int) }
     }
 }
 
@@ -210,5 +228,13 @@ impl TextEntry for MultilineEntry {
                 to_heap_ptr(callback),
             );
         }
+    }
+
+    fn readonly(&self) -> bool {
+        unsafe { libui_ffi::uiMultilineEntryReadOnly(self.uiMultilineEntry) != 0 }
+    }
+
+    fn set_readonly(&mut self, readonly: bool) {
+        unsafe { libui_ffi::uiMultilineEntrySetReadOnly(self.uiMultilineEntry, readonly as c_int) }
     }
 }
