@@ -1,4 +1,4 @@
-use draw::DrawContext;
+use crate::draw::DrawContext;
 use std::marker::PhantomData;
 use std::ptr;
 use libui_ffi::{self, uiDrawBrush};
@@ -22,7 +22,7 @@ pub struct BrushRef<'a> {
 }
 
 impl Brush {
-    pub fn as_ui_draw_brush_ref(&self, _ctx: &DrawContext) -> BrushRef {
+    pub fn as_ui_draw_brush_ref(&self, _ctx: &DrawContext) -> BrushRef<'_> {
         match *self {
             Brush::Solid(ref solid_brush) => BrushRef {
                 ui_draw_brush: uiDrawBrush {

@@ -1,5 +1,5 @@
 use super::Control;
-use error::UIError;
+use crate::error::UIError;
 use std::ffi::{CStr, CString};
 use std::mem;
 use std::os::raw::c_int;

@@ -1,7 +1,7 @@
 //! Menus that appear at the top of windows, and the items that go in them.
 
-use callback_helpers::{from_void_ptr, to_heap_ptr};
-use controls::Window;
+use crate::callback_helpers::{from_void_ptr, to_heap_ptr};
+use crate::controls::Window;
 use std::ffi::CString;
 use std::os::raw::{c_int, c_void};
 use libui_ffi::{self, uiMenu, uiMenuItem, uiWindow};

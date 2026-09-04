@@ -2,7 +2,7 @@
 //!
 //! Note that `Control` and all specific control types are references to memory which is owned by the UI library.
 
-use ui::UI;
+use crate::ui::UI;
 use libui_ffi::{self, uiControl};
 
 use std::ptr;

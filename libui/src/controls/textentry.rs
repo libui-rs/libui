@@ -4,13 +4,13 @@
 //! `\r\n` for display are added and removed by the controls.
 
 use super::Control;
-use callback_helpers::{from_void_ptr, to_heap_ptr};
+use crate::callback_helpers::{from_void_ptr, to_heap_ptr};
 use libui_ffi::{self, uiControl, uiEntry, uiMultilineEntry};
 use std::ffi::{CStr, CString};
 use std::mem;
 use std::os::raw::c_int;
 use std::os::raw::c_void;
-use str_tools::{from_toolkit_string, to_toolkit_string};
+use crate::str_tools::{from_toolkit_string, to_toolkit_string};
 
 pub trait TextEntry {
     fn value(&self) -> String;

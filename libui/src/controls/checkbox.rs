@@ -1,11 +1,11 @@
 use std::ffi::{CStr, CString};
 use super::Control;
-use callback_helpers::{from_void_ptr, to_heap_ptr};
+use crate::callback_helpers::{from_void_ptr, to_heap_ptr};
 use std::i32;
 use std::mem;
 use std::os::raw::c_void;
-use str_tools::to_toolkit_string;
-use ui::UI;
+use crate::str_tools::to_toolkit_string;
+use crate::ui::UI;
 use libui_ffi::{self, uiCheckbox, uiControl};
 
 define_control! {

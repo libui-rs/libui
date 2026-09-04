@@ -1,7 +1,7 @@
-use callback_helpers::{from_void_ptr, to_heap_ptr};
-use error::UIError;
-use ffi_tools;
-use libui_ffi;
+use crate::callback_helpers::{from_void_ptr, to_heap_ptr};
+use crate::error::UIError;
+use crate::ffi_tools;
+use ::libui_ffi;
 use std::os::raw::{c_int, c_void};
 
 use std::ffi::CStr;
@@ -13,7 +13,7 @@ use std::sync::{Arc, RwLock};
 use std::thread;
 use std::time::{Duration, SystemTime};
 
-use controls::Window;
+use crate::controls::Window;
 
 /// RAII guard for the UI; when dropped, it uninits libUI.
 struct UIToken {
@@ -118,7 +118,7 @@ impl UI {
     }
 
     /// Returns an `EventLoop`, a struct that allows you to step over iterations or events in the UI.
-    pub fn event_loop(&self) -> EventLoop {
+    pub fn event_loop(&self) -> EventLoop<'_> {
         unsafe { libui_ffi::uiMainSteps() };
         return EventLoop {
             _pd: PhantomData,

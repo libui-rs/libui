@@ -1,5 +1,5 @@
 use super::Control;
-use callback_helpers::{from_void_ptr, to_heap_ptr};
+use crate::callback_helpers::{from_void_ptr, to_heap_ptr};
 use std::ffi::{CStr, CString};
 use std::mem;
 use std::os::raw::c_void;

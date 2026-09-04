@@ -56,8 +56,8 @@ pub use ui::{EventLoop, EventQueue, EventQueueWithData, UI};
 
 /// Common imports are packaged into this module. It's meant to be glob-imported: `use libui::prelude::*`.
 pub mod prelude {
-    pub use controls::LayoutStrategy;
-    pub use controls::{NumericEntry, TextEntry};
-    pub use controls::{Window, WindowType};
-    pub use ui::UI;
+    pub use crate::controls::LayoutStrategy;
+    pub use crate::controls::{NumericEntry, TextEntry};
+    pub use crate::controls::{Window, WindowType};
+    pub use crate::ui::UI;
 }

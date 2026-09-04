@@ -1,7 +1,7 @@
 //! Provides a way to allocate an area in the window for custom drawing.
 
-use controls::Control;
-use draw;
+use crate::controls::Control;
+use crate::draw;
 use std::mem;
 use std::os::raw::c_int;
 pub use libui_ffi::uiExtKey as ExtKey;
@@ -245,6 +245,7 @@ impl AreaDrawParams {
 }
 
 bitflags! {
+    #[derive(Copy, Clone, Debug)]
     pub struct Modifiers: u8 {
         const MODIFIER_CTRL = 1 << 0;
         const MODIFIER_ALT = 1 << 1;

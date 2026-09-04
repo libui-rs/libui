@@ -3,7 +3,7 @@ use std::ffi::CString;
 use std::i32;
 use std::mem;
 use std::os::raw::c_void;
-use ui::UI;
+use crate::ui::UI;
 use libui_ffi::{self, uiControl, uiRadioButtons};
 
 define_control! {

@@ -1,4 +1,4 @@
-use draw::DrawContext;
+use crate::draw::DrawContext;
 use std::marker::PhantomData;
 use std::os::raw::c_double;
 use libui_ffi::uiDrawStrokeParams;
@@ -23,7 +23,7 @@ pub struct StrokeParamsRef<'a> {
 }
 
 impl StrokeParams {
-    pub fn as_stroke_params_ref(&self, _ctx: &DrawContext) -> StrokeParamsRef {
+    pub fn as_stroke_params_ref(&self, _ctx: &DrawContext) -> StrokeParamsRef<'_> {
         StrokeParamsRef {
             ui_draw_stroke_params: uiDrawStrokeParams {
                 Cap: self.cap,

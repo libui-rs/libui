@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this 
 project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [0.5.0]
+
+### Changed
+- Updated build dependencies. Specifically of bindgen, which tended to be problematic in the past.
+
+### Added
+- Added `Entry::set_readonly()` and `Entry::readonly()`.
+- Added `PasswordEntry::set_readonly()` and `PasswordEntry::readonly()`.
+- Added `SearchEntry::set_readonly()` and `SearchEntry::readonly()`.
+
 ## [0.4.0]
 
 ### Added

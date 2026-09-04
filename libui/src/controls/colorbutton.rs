@@ -1,8 +1,8 @@
 use super::Control;
-use callback_helpers::{from_void_ptr, to_heap_ptr};
+use crate::callback_helpers::{from_void_ptr, to_heap_ptr};
 use std::mem;
 use std::os::raw::c_void;
-use ui::UI;
+use crate::ui::UI;
 use libui_ffi::{self, uiColorButton, uiControl};
 
 define_control! {

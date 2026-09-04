@@ -1,8 +1,10 @@
 [package]
 name = "libui"
-version = "0.4.0"
+version = "0.5.0"
 authors = ["Jakob K <jjk@outlook.at>"]
 description = "A native, cross-platform and lightweight UI toolkit."
+edition = "2021"
+rust-version = "1.70.0"
 
 # These URLs point to more information about the package. These are
 # intended to be webviews of the relevant data, not necessarily compatible
@@ -27,6 +29,6 @@ categories = ["gui", "os::macos-apis", "os::unix-apis", "os::windows-apis"]
 license = "MIT"
 
 [dependencies]
-bitflags = "1"
+bitflags = "2.4"
 libc = "0.2"
-libui-ffi = { path = "../libui-ffi", version = "0.4.0" }
+libui-ffi = { path = "../libui-ffi", version = "0.5.0" }

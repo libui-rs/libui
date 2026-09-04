@@ -1,13 +1,13 @@
 //! Functionality related to creating, managing, and destroying GUI windows.
 
-use callback_helpers::{from_void_ptr, to_heap_ptr};
-use controls::Control;
+use crate::callback_helpers::{from_void_ptr, to_heap_ptr};
+use crate::controls::Control;
 use std::cell::RefCell;
 use std::ffi::{CStr, CString};
 use std::mem;
 use std::os::raw::{c_int, c_void};
 use std::path::PathBuf;
-use ui::UI;
+use crate::ui::UI;
 use libui_ffi::{self, uiControl, uiFreeText, uiWindow};
 
 thread_local! {

@@ -1,9 +1,9 @@
 use super::Control;
-use callback_helpers::{from_void_ptr, to_heap_ptr};
+use crate::callback_helpers::{from_void_ptr, to_heap_ptr};
 use libui_ffi::{self, uiControl, uiDateTimePicker};
 use std::mem;
 use std::os::raw::c_void;
-use ui::UI;
+use crate::ui::UI;
 
 define_control! {
     /// Allows to enter a date and/or time.

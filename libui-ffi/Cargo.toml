@@ -1,9 +1,11 @@
 [package]
 name = "libui-ffi"
-version = "0.4.0"
+version = "0.5.0"
 authors = ["Jakob K <jjk@outlook.at>"]
 license = "MIT"
 description = "Easy to build low-level bindings to 'libui-ng'"
+edition = "2021"
+rust-version = "1.70.0"
 
 # These URLs point to more information about the package. These are
 # intended to be webviews of the relevant data, not necessarily compatible
@@ -34,7 +36,8 @@ build = []
 libc = "0.2"
 
 [build-dependencies]
-bindgen = "0.66"
-cc = "1.0"
-embed-resource = "2.2"
+bindgen = "0.72"
+# fix cc version so it uses shlex 1.3, as bindgen does
+cc = "=1.2.62"
+embed-resource = "2.2.0"
 pkg-config = "0.3"

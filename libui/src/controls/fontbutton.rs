@@ -1,10 +1,10 @@
 use super::Control;
-use callback_helpers::{from_void_ptr, to_heap_ptr};
+use crate::callback_helpers::{from_void_ptr, to_heap_ptr};
 use std::ffi::CStr;
 use std::mem::MaybeUninit;
 use std::os::raw::c_void;
 use std::{convert::TryFrom, mem};
-use ui::UI;
+use crate::ui::UI;
 use libui_ffi::{self, uiControl, uiFontButton, uiFontDescriptor};
 
 /// An enum listing font styles.
